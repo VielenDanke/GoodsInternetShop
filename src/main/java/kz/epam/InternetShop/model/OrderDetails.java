@@ -21,7 +21,7 @@ public class OrderDetails {
     private Long goods_id;
     @Column(name = "COUNT")
     private Integer count;
-    @Column(name = "COST")
+    @Column(name = "COST", nullable = false)
     private Double cost;
 
     @ManyToOne(fetch = FetchType.LAZY)
