@@ -29,7 +29,7 @@ create table users
     LOCALE      VARCHAR2(50),
     ADDRESS     VARCHAR2(256),
     FULL_NAME   VARCHAR2(256),
-    ENABLED     NUMBER(1) DEFAULT 0 NOT NULL check (ENABLED in (0, 1)),
+    ENABLED     NUMBER(1) DEFAULT 1 NOT NULL check (ENABLED in (0, 1)),
     CONSTRAINT users_pk PRIMARY KEY (ID)
 );
 
