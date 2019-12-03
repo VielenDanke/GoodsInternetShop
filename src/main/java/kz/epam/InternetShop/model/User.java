@@ -23,6 +23,7 @@ public class User {
     @NotBlank
     @Column(name = "USERNAME", nullable = false)
     private String username;
+    @NotBlank
     @Column(name = "PASSWORD")
     private String password;
     @Column(name = "GENDER")
