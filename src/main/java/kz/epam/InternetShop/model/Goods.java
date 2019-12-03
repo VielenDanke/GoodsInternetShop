@@ -38,7 +38,7 @@ public class Goods {
     private List<String> photos = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "orderDetails",
+            mappedBy = "goods",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

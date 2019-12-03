@@ -31,7 +31,7 @@ public class Order {
     private User user;
 
     @OneToMany(
-            mappedBy = "orderDetails",
+            mappedBy = "order",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

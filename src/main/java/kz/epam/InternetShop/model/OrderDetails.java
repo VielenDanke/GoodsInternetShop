@@ -25,10 +25,10 @@ public class OrderDetails {
     private Double cost;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_ID")
+    @JoinColumn(name = "ORDER_ID", updatable = false, insertable = false)
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GOODS_ID")
+    @JoinColumn(name = "GOODS_ID", updatable = false, insertable = false)
     private Goods goods;
 }
