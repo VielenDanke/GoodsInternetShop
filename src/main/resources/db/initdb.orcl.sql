@@ -27,6 +27,9 @@ create table users
     PASSWORD    VARCHAR2(1024),
     GENDER      VARCHAR2(50),
     LOCALE      VARCHAR2(50),
+    ADDRESS     VARCHAR2(256),
+    FULL_NAME   VARCHAR2(256),
+    ENABLED     NUMBER(1) DEFAULT 0 NOT NULL check (ENABLED in (0, 1)),
     CONSTRAINT users_pk PRIMARY KEY (ID)
 );
 
@@ -42,7 +45,7 @@ create table orders
     ID          NUMBER(20) DEFAULT auto_seq.NEXTVAL,
     USER_ID     NUMBER(20) NOT NULL,
     CREATED     TIMESTAMP DEFAULT SYSDATE,
-    STATUS      NUMBER(1) check (STATUS in (0, 1)),
+    STATUS      NUMBER(1)  DEFAULT 0 NOT NULL check (STATUS in (0, 1)),
     CONSTRAINT order_pk PRIMARY KEY (ID),
     FOREIGN KEY (USER_ID) REFERENCES users (ID) ON DELETE CASCADE
 );
