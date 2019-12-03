@@ -1,5 +1,7 @@
 package kz.epam.InternetShop.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +11,8 @@ import javax.persistence.*;
 @Table(name = "ORDER_DETAILS")
 @NoArgsConstructor
 @Data
+@Builder
+@AllArgsConstructor
 public class OrderDetails {
 
     @Id
