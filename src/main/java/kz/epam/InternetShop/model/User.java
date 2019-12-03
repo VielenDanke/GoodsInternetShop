@@ -31,6 +31,10 @@ public class User {
     private String locale;
     @Column(name = "ADDRESS")
     private String address;
+    @Column(name = "ENABLED")
+    private Integer enabled;
+    @Column(name = "FULL_NAME")
+    private String fullName;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID"))
