@@ -4,21 +4,20 @@
 -- create user internetshop identified by password;
 -- GRANT ALL PRIVILEGES to internetshop;
 
+DROP SEQUENCE AUTO_SEQ;
+DROP TABLE authorities;
+DROP TABLE order_details;
+DROP TABLE orders;
+DROP TABLE photo_goods;
+DROP TABLE goods;
+DROP TABLE goods_categories;
+DROP TABLE users;
+
 CREATE SEQUENCE auto_seq
  START WITH 100000
  INCREMENT BY   1
  NOCACHE
  NOCYCLE;
-
-create table goods
-(
-    ID          NUMBER(20) DEFAULT auto_seq.NEXTVAL,
-    NAME        VARCHAR2(128)  NOT NULL,
-    DESCRIPTION VARCHAR2(1024) NOT NULL,
-    COST        NUMBER(10, 2)  NOT NULL,
-    COUNT       NUMBER(5)      NOT NULL,
-    CONSTRAINT goods_pk PRIMARY KEY (ID)
-);
 
 create table users
 (
@@ -31,6 +30,26 @@ create table users
     FULL_NAME   VARCHAR2(256),
     ENABLED     NUMBER(1) DEFAULT 1 NOT NULL check (ENABLED in (0, 1)),
     CONSTRAINT users_pk PRIMARY KEY (ID)
+);
+
+create table goods_categories
+(
+    ID   NUMBER(20) DEFAULT auto_seq.NEXTVAL,
+    NAME VARCHAR2(50) NOT NULL UNIQUE,
+    CONSTRAINT categories_pk PRIMARY KEY (ID)
+);
+
+
+create table goods
+(
+    ID          NUMBER(20) DEFAULT auto_seq.NEXTVAL,
+    CATEGORY_ID NUMBER(20) NOT NULL,
+    NAME        VARCHAR2(128)  NOT NULL,
+    DESCRIPTION VARCHAR2(1024) NOT NULL,
+    COST        NUMBER(10, 2)  NOT NULL,
+    COUNT       NUMBER(5)      NOT NULL,
+    CONSTRAINT goods_pk PRIMARY KEY (ID),
+    FOREIGN KEY (CATEGORY_ID) REFERENCES goods_categories (ID) ON DELETE CASCADE
 );
 
 create table photo_goods
