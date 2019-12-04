@@ -20,9 +20,9 @@ public class OrderDetails {
     @SequenceGenerator(name = "AUTO_SEQ", allocationSize = 1, sequenceName = "AUTO_SEQ")
     private Long id;
     @Column(name = "ORDER_ID")
-    private Long order_id;
+    private Long orderId;
     @Column(name = "GOODS_ID")
-    private Long goods_id;
+    private Long goodsId;
     @Column(name = "COUNT")
     private Integer count;
     @Column(name = "COST", nullable = false)
