@@ -1,6 +1,7 @@
 package kz.epam.InternetShop.repository;
 
 import kz.epam.InternetShop.model.Goods;
+import kz.epam.InternetShop.model.GoodsCategory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,16 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class TestGoodsRepository {
 
-    private final GoodsRepository goodsRepository;
-
     @Autowired
-    public TestGoodsRepository(GoodsRepository goodsRepository) {
-        this.goodsRepository = goodsRepository;
-    }
+    private GoodsRepository goodsRepository;
+    @Autowired
+    private GoodsCategoryRepository goodsCategoryRepository;
 
     @Before
     public void setUp() {
         goodsRepository.deleteAll();
+        goodsCategoryRepository.deleteAll();
         getGoodsList().forEach(goodsRepository::save);
     }
 
@@ -55,7 +54,7 @@ public class TestGoodsRepository {
 
         List<Goods> goodsList = Arrays.asList(
                 Goods.builder()
-                        .categoryId((long) 100002)
+                        .goodsCategory(GoodsCategory.builder().id((long) 100002).build())
                         .name("testFirst")
                         .description("testFirst")
                         .cost(100.12)
@@ -63,7 +62,7 @@ public class TestGoodsRepository {
                         .photos(Arrays.asList("testFirst"))
                         .build(),
                 Goods.builder()
-                        .categoryId((long) 100003)
+                        .goodsCategory(GoodsCategory.builder().id((long) 100003).build())
                         .name("testSecond")
                         .description("testSecond")
                         .cost(200.22)
@@ -71,7 +70,7 @@ public class TestGoodsRepository {
                         .photos(Arrays.asList("testSecond"))
                         .build(),
                 Goods.builder()
-                        .categoryId((long) 100004)
+                        .goodsCategory(GoodsCategory.builder().id((long) 100004).build())
                         .name("testThird")
                         .description("testThird")
                         .cost(300.31)
