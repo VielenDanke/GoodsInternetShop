@@ -19,10 +19,6 @@ public class OrderDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AUTO_SEQ")
     @SequenceGenerator(name = "AUTO_SEQ", allocationSize = 1, sequenceName = "AUTO_SEQ")
     private Long id;
-    @Column(name = "ORDER_ID")
-    private Long orderId;
-    @Column(name = "GOODS_ID")
-    private Long goodsId;
     @Column(name = "COUNT")
     private Integer count;
     @Column(name = "COST", nullable = false)

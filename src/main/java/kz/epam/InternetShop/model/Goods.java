@@ -20,8 +20,6 @@ public class Goods {
     @SequenceGenerator(name = "AUTO_SEQ", allocationSize = 1, sequenceName = "AUTO_SEQ")
     @Column(name = "ID")
     private Long id;
-    @Column(name = "CATEGORY_ID")
-    private Long categoryId;
     @NotBlank
     @Column(name = "NAME", nullable = false)
     private String name;

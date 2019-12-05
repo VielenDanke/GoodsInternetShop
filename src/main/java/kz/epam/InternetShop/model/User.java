@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     @SequenceGenerator(name = "AUTO_SEQ", allocationSize = 1, sequenceName = "AUTO_SEQ")
     @Column(name = "ID")
     private Long id;
+    @Email(message = "Email is not correct")
     @NotBlank
     @Column(name = "USERNAME", nullable = false)
     private String username;
@@ -37,10 +39,12 @@ public class User implements UserDetails {
     private String gender;
     @Column(name = "LOCALE")
     private String locale;
+    @NotBlank
     @Column(name = "ADDRESS")
     private String address;
     @Column(name = "ENABLED")
     private Integer enabled;
+    @NotBlank
     @Column(name = "FULL_NAME")
     private String fullName;
 
