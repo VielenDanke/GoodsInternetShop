@@ -1,9 +1,6 @@
 package kz.epam.InternetShop.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -53,40 +50,4 @@ public class Goods {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CATEGORY_ID", updatable = false, insertable = false)
     private GoodsCategory goodsCategory;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Double getCost() {
-        return cost;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public List<String> getPhotos() {
-        return photos;
-    }
-
-    public List<OrderDetails> getOrderDetails() {
-        return orderDetails;
-    }
-
-    public GoodsCategory getGoodsCategory() {
-        return goodsCategory;
-    }
 }
