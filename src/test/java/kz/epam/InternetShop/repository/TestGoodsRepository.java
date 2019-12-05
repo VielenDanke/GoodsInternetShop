@@ -31,6 +31,7 @@ public class TestGoodsRepository {
     public void setUp() {
         goodsRepository.deleteAll();
         goodsCategoryRepository.deleteAll();
+        getGoodsCategoryList().forEach(goodsCategoryRepository::save);
         getGoodsList().forEach(goodsRepository::save);
     }
 
@@ -79,5 +80,15 @@ public class TestGoodsRepository {
                         .build()
         );
         return goodsList;
+    }
+
+    private List<GoodsCategory> getGoodsCategoryList() {
+
+        List<GoodsCategory> goodsCategoryList = Arrays.asList(
+                GoodsCategory.builder().id((long) 100002).name("testCategory2").build(),
+                GoodsCategory.builder().id((long) 100003).name("testCategory3").build(),
+                GoodsCategory.builder().id((long) 100004).name("testCategory4").build()
+        );
+        return goodsCategoryList;
     }
 }
