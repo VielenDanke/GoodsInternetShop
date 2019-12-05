@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +27,10 @@ public class Goods {
     @NotBlank
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
-    @NotBlank
+    @NotNull
     @Column(name = "COST", nullable = false)
     private Double cost;
-    @NotBlank
+    @NotNull
     @Column(name = "COUNT", nullable = false)
     private Integer count;
 
@@ -45,7 +46,7 @@ public class Goods {
     )
     private List<OrderDetails> orderDetails;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID", updatable = false, insertable = false)
     private GoodsCategory goodsCategory;
 }
