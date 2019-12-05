@@ -29,7 +29,7 @@ public class TestUserRepository {
     public static final String USERNAME_FOR_SEARCH = "test";
     public static final String ADDRESS_FOR_SEARCH = "Караганда";
     public static final String ADDRESS_FOR_UPDATE = "Москва, ул. Петроградская 78-44";
-    public static final String FULLNAME_FOR_SEARCH = "Аманболов";
+    public static final String FULL_NAME_FOR_SEARCH = "Аманболов";
     public static final Set<Role> ROLES =  new HashSet<>(Arrays.asList(Role.ROLE_USER));
 
     public static final User NEW_USER = User.builder()
@@ -121,10 +121,10 @@ public class TestUserRepository {
     @Transactional
     @Rollback
     public void findByFullNameLike() {
-        List<User> actualUserList = userRepository.findByFullNameLike(wrapWithWildcard(FULLNAME_FOR_SEARCH));
+        List<User> actualUserList = userRepository.findByFullNameLike(wrapWithWildcard(FULL_NAME_FOR_SEARCH));
         List<User> expectedUserList = USERS
                 .stream()
-                .filter(user -> user.getFullName().contains(FULLNAME_FOR_SEARCH))
+                .filter(user -> user.getFullName().contains(FULL_NAME_FOR_SEARCH))
                 .collect(Collectors.toList());
         Assert.assertEquals(expectedUserList.size(), actualUserList.size());
         Assert.assertEquals(true, expectedUserList.containsAll(actualUserList));

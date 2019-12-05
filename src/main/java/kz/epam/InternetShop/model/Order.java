@@ -23,7 +23,8 @@ public class Order {
     @SequenceGenerator(name = "AUTO_SEQ", allocationSize = 1, sequenceName = "AUTO_SEQ")
     @Column(name = "ID")
     private Long id;
-
+    @Column(name = "USER_ID")
+    private Long userId;
     @Column(name = "CREATED")
     private LocalDateTime creationDate;
     @Column(name = "STATUS", nullable = false)
