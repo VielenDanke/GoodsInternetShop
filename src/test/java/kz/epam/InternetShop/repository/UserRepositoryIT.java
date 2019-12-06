@@ -1,6 +1,5 @@
 package kz.epam.InternetShop.repository;
 
-import kz.epam.InternetShop.model.Role;
 import kz.epam.InternetShop.model.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,61 +15,17 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static kz.epam.InternetShop.util.UserTestDataTestUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class TestUserRepository {
+public class UserRepositoryIT {
 
     @Autowired
     private UserRepository userRepository;
 
-    public static final String WILDCARD = "%";
-    public static final String USERNAME_FOR_SEARCH = "test";
-    public static final String ADDRESS_FOR_SEARCH = "Караганда";
-    public static final String ADDRESS_FOR_UPDATE = "Москва, ул. Петроградская 78-44";
-    public static final String FULL_NAME_FOR_SEARCH = "Аманболов";
-    public static final Set<Role> ROLES =  new HashSet<>(Arrays.asList(Role.ROLE_USER));
-
-    public static final User NEW_USER = User.builder()
-                    .username("newuser")
-                    .password("test")
-                    .gender("test")
-                    .locale("test")
-                    .address("Павлодар, ул. Чкалова 33-08")
-                    .enabled(1)
-                    .authority(ROLES)
-                    .fullName("Исаев Павел Михайлович").build();
-
-    public static final List<User> USERS = Arrays.asList(
-            User.builder()
-                    .username("testA")
-                    .password("test")
-                    .gender("test")
-                    .locale("test")
-                    .address("Караганда, ул. Гоголя 36-8")
-                    .enabled(1)
-                    .authority(ROLES)
-                    .fullName("Аманболов Нуркен Касымулы").build(),
-            User.builder()
-                    .username("testB")
-                    .password("test")
-                    .gender("test")
-                    .locale("test")
-                    .address("Караганда, пр. Бухар Жырау 3-28")
-                    .enabled(1)
-                    .authority(ROLES)
-                    .fullName("Михайлов Игорь Анатольевич").build(),
-            User.builder()
-                    .username("testC")
-                    .password("test")
-                    .gender("test")
-                    .locale("test")
-                    .address("Астана, ул. Победы 45-16")
-                    .enabled(1)
-                    .authority(ROLES)
-                    .fullName("Аманболов Айнур Бериккызы").build()
-    );
+    private static final String WILDCARD = "%";
 
     @Before
     public void setUp() {
