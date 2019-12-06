@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -25,10 +27,12 @@ public class OrderDetails {
     private Double cost;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "ORDER_ID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GOODS_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "GOODS_ID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Goods goods;
 }

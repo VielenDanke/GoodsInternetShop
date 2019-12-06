@@ -1,6 +1,8 @@
 package kz.epam.InternetShop.model;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -22,16 +24,16 @@ public class Goods {
     @Column(name = "ID")
     private Long id;
     @NotBlank
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME")
     private String name;
     @NotBlank
-    @Column(name = "DESCRIPTION", nullable = false)
+    @Column(name = "DESCRIPTION")
     private String description;
     @NotNull
-    @Column(name = "COST", nullable = false)
+    @Column(name = "COST")
     private Double cost;
     @NotNull
-    @Column(name = "COUNT", nullable = false)
+    @Column(name = "COUNT")
     private Integer count;
 
     @ElementCollection
@@ -39,14 +41,11 @@ public class Goods {
     @Column(name = "PHOTO")
     private List<String> photos = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "goods",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "goods", fetch = FetchType.LAZY)
     private List<OrderDetails> orderDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATEGORY_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private GoodsCategory goodsCategory;
 }

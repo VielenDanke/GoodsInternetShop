@@ -53,11 +53,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> authority = new HashSet<>();
 
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
 
     @Override

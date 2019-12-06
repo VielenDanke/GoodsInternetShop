@@ -25,10 +25,6 @@ public class GoodsCategory {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(
-            mappedBy = "goodsCategory",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "goodsCategory", fetch = FetchType.LAZY)
     private List<Goods> goods = new ArrayList<>();
 }

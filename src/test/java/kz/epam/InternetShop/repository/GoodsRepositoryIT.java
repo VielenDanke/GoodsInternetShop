@@ -8,17 +8,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import static kz.epam.InternetShop.testdata.GoodsCategoryTestData.getGoodsCategoryList;
-import static kz.epam.InternetShop.testdata.GoodsTestData.getGoodsList;
+import static kz.epam.InternetShop.testdata.GoodsCategoryDataTestUtil.GOODS_CATEGORIES;
+import static kz.epam.InternetShop.testdata.GoodsDataTestUtil.GOODS_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -32,14 +29,17 @@ public class GoodsRepositoryIT {
 
     @Before
     public void setUp() {
-        goodsRepository.deleteAll();
         goodsCategoryRepository.deleteAll();
+        goodsRepository.deleteAll();
 
-        Iterable<Goods> goodsIterable = getGoodsList();
-
-        getGoodsCategoryList().forEach(goodsCategory -> {
-            goodsCategory.setGoods(Arrays.asList(goodsIterable.iterator().next()));
+        GOODS_CATEGORIES.forEach(goodsCategory -> {
+            goodsCategory.setId(null);
             goodsCategoryRepository.saveAndFlush(goodsCategory);
+        });
+
+        GOODS_LIST.forEach(goods -> {
+            goods.setId(null);
+            goodsRepository.saveAndFlush(goods);
         });
     }
 
@@ -48,7 +48,6 @@ public class GoodsRepositoryIT {
     @Transactional
     public void goodsRepositoryShouldNotBeEmpty() {
         assertThat(goodsRepository).isNotNull();
-        assertThat(goodsCategoryRepository).isNotNull();
     }
 
     @Test
@@ -57,6 +56,6 @@ public class GoodsRepositoryIT {
     public void findAllGoods() {
         List<Goods> goodsRepositoryAll = goodsRepository.findAll();
 
-        Assert.assertEquals(goodsRepositoryAll, getGoodsList());
+        Assert.assertEquals(goodsRepositoryAll, GOODS_LIST);
     }
 }

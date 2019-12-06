@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,13 +31,10 @@ public class Order {
     private Integer status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "USER_ID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToMany(
-            mappedBy = "order",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderDetails> orderDetails = new ArrayList<>();
 }
