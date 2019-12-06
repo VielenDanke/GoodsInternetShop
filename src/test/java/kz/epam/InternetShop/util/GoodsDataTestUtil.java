@@ -12,7 +12,6 @@ public class GoodsDataTestUtil {
 
     public static final List<Goods> GOODS_LIST = Arrays.asList(
             Goods.builder()
-                    .id(null)
                     .goodsCategory(GOODS_CATEGORIES.get(0))
                     .name("testFirst")
                     .description("testFirst")
@@ -22,7 +21,6 @@ public class GoodsDataTestUtil {
                     .orderDetails(Arrays.asList(new OrderDetails()))
                     .build(),
             Goods.builder()
-                    .id(null)
                     .goodsCategory(GOODS_CATEGORIES.get(1))
                     .name("testSecond")
                     .description("testSecond")
@@ -32,7 +30,6 @@ public class GoodsDataTestUtil {
                     .orderDetails(Arrays.asList(new OrderDetails()))
                     .build(),
             Goods.builder()
-                    .id(null)
                     .goodsCategory(GOODS_CATEGORIES.get(2))
                     .name("testThird")
                     .description("testThird")

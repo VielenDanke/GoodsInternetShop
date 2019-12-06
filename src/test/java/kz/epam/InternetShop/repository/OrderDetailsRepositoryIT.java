@@ -88,5 +88,4 @@ public class OrderDetailsRepositoryIT {
         Assert.assertEquals(ORDER1_DETAILS.size(), actualList.size());
         Assert.assertEquals(true, actualList.containsAll(ORDER1_DETAILS));
     }
-
 }

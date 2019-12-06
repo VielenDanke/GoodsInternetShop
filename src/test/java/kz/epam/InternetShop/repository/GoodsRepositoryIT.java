@@ -64,4 +64,12 @@ public class GoodsRepositoryIT {
         List<Goods> goodsByNameLikeList = goodsRepository.findAllByNameLike(GOODS_LIST.get(0).getName());
         Assert.assertEquals(goodsByNameLikeList.get(0), GOODS_LIST.get(0));
     }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void shouldReturnAllGoodsByDescriptionLike() {
+        List<Goods> goodsByDescriptionLikeList = goodsRepository.findAllByDescriptionLike(GOODS_LIST.get(0).getDescription());
+        Assert.assertEquals(goodsByDescriptionLikeList.get(0), GOODS_LIST.get(0));
+    }
 }
