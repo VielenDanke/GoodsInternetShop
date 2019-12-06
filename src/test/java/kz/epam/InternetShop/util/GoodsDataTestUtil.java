@@ -1,4 +1,4 @@
-package kz.epam.InternetShop.testdata;
+package kz.epam.InternetShop.util;
 
 import kz.epam.InternetShop.model.Goods;
 import kz.epam.InternetShop.model.OrderDetails;
@@ -6,7 +6,7 @@ import kz.epam.InternetShop.model.OrderDetails;
 import java.util.Arrays;
 import java.util.List;
 
-import static kz.epam.InternetShop.testdata.GoodsCategoryDataTestUtil.GOODS_CATEGORIES;
+import static kz.epam.InternetShop.util.GoodsCategoryDataTestUtil.GOODS_CATEGORIES;
 
 public class GoodsDataTestUtil {
 

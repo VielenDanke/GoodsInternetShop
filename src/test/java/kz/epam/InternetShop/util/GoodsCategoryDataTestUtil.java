@@ -1,4 +1,4 @@
-package kz.epam.InternetShop.testdata;
+package kz.epam.InternetShop.util;
 
 import kz.epam.InternetShop.model.GoodsCategory;
 

@@ -1,7 +1,6 @@
 package kz.epam.InternetShop.repository;
 
 import kz.epam.InternetShop.model.Goods;
-import kz.epam.InternetShop.model.GoodsCategory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static kz.epam.InternetShop.testdata.GoodsCategoryDataTestUtil.GOODS_CATEGORIES;
-import static kz.epam.InternetShop.testdata.GoodsDataTestUtil.GOODS_LIST;
-import static org.assertj.core.api.Assertions.assertThat;
+import static kz.epam.InternetShop.util.GoodsCategoryDataTestUtil.GOODS_CATEGORIES;
+import static kz.epam.InternetShop.util.GoodsDataTestUtil.GOODS_LIST;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,16 +44,24 @@ public class GoodsRepositoryIT {
     @Test
     @Rollback
     @Transactional
-    public void goodsRepositoryShouldNotBeEmpty() {
-        assertThat(goodsRepository).isNotNull();
+    public void shouldFindAllGoods() {
+        List<Goods> goodsRepositoryAll = goodsRepository.findAll();
+        Assert.assertEquals(goodsRepositoryAll, GOODS_LIST);
     }
 
     @Test
     @Rollback
     @Transactional
-    public void findAllGoods() {
-        List<Goods> goodsRepositoryAll = goodsRepository.findAll();
+    public void shouldFindAllGoodsByCategory() {
+        List<Goods> goodsByCategoryList = goodsRepository.findAllByGoodsCategory(GOODS_CATEGORIES.get(0));
+        Assert.assertEquals(goodsByCategoryList.get(0), GOODS_LIST.get(0));
+    }
 
-        Assert.assertEquals(goodsRepositoryAll, GOODS_LIST);
+    @Test
+    @Rollback
+    @Transactional
+    public void shouldFindAllGoodsByNameLike() {
+        List<Goods> goodsByNameLikeList = goodsRepository.findAllByNameLike(GOODS_LIST.get(0).getName());
+        Assert.assertEquals(goodsByNameLikeList.get(0), GOODS_LIST.get(0));
     }
 }

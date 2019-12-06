@@ -16,5 +16,5 @@ public interface GoodsRepository extends JpaRepository<Goods, Long> {
 
     List<Goods> findAllByGoodsCategory(GoodsCategory goodsCategory);
 
-    List<Goods> findAllByName(String name);
+    List<Goods> findAllByNameLike(String nameLike);
 }
