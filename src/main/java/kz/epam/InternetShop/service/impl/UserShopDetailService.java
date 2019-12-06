@@ -1,4 +1,4 @@
-package kz.epam.InternetShop.service;
+package kz.epam.InternetShop.service.impl;
 
 import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.repository.UserRepository;

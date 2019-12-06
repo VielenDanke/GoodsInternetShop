@@ -1,5 +1,6 @@
 package kz.epam.InternetShop.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class Order {
     @Column(name = "ID")
     private Long id;
     @Column(name = "CREATED")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
     @Column(name = "STATUS", nullable = false)
     private Integer status;
