@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface GoodsRepository extends JpaRepository<Goods, Long> {
 
     @Query("SELECT g FROM Goods g")
