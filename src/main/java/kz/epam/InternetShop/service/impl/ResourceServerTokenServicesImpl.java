@@ -41,7 +41,6 @@ public class ResourceServerTokenServicesImpl implements ResourceServerTokenServi
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private User user;
 
     public ResourceServerTokenServicesImpl() {}
 
@@ -82,6 +81,7 @@ public class ResourceServerTokenServicesImpl implements ResourceServerTokenServi
 
     public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
         Map<String, Object> map = this.getMap(this.userInfoEndpointUrl, accessToken);
+        User user;
 
         if (map.containsKey("sub")) {
 
@@ -95,6 +95,8 @@ public class ResourceServerTokenServicesImpl implements ResourceServerTokenServi
                 user = new User();
                 user.setEnabled(1);
                 user.setAuthority(Collections.singleton(Role.ROLE_USER));
+            } else {
+                user = userFromDb.get();
             }
 
             user.setUsername(username);
