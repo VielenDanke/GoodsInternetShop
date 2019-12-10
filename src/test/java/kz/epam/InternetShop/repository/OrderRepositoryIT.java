@@ -13,11 +13,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static kz.epam.InternetShop.util.OrderDataTestUtil.ORDER_LIST;
 import static kz.epam.InternetShop.util.UserTestDataTestUtil.USERS;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
