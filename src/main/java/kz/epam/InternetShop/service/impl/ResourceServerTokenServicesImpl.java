@@ -95,11 +95,10 @@ public class ResourceServerTokenServicesImpl implements ResourceServerTokenServi
                 user = new User();
                 user.setEnabled(1);
                 user.setAuthority(Collections.singleton(Role.ROLE_USER));
+                user.setUsername(username);
             } else {
                 user = userFromDb.get();
             }
-
-            user.setUsername(username);
             user.setFullName(fullName);
             user.setPassword(passwordEncoder.encode("oauth2user"));
 
