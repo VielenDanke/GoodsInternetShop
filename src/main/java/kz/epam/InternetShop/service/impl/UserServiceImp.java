@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImp implements UserService<User> {
 
@@ -29,5 +31,25 @@ public class UserServiceImp implements UserService<User> {
     @Override
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    @Override
+    public List<User> findByUsernameLike(String usernameLike) {
+        return userRepository.findByUsernameLike(usernameLike);
+    }
+
+    @Override
+    public List<User> findByAddressLike(String addressLike) {
+        return userRepository.findByAddressLike(addressLike);
+    }
+
+    @Override
+    public List<User> findByFullNameLike(String fullNameLike) {
+        return userRepository.findByFullNameLike(fullNameLike);
+    }
+
+    @Override
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
     }
 }

@@ -103,6 +103,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             User user = userRepository.findByUsername(username).orElseGet(() -> {
                 User newUser = new User();
                 String sex = "";
+                String firstName = (String) map.get("first_name");
+                String lastName = (String) map.get("last_name");
 
                 switch ((Integer) map.get("sex")) {
                     case 0:
@@ -119,7 +121,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         break;
                 }
 
-                newUser.setFullName((String) map.get("first_name") + map.get("last_name"));
+                newUser.setFullName(firstName + lastName);
                 newUser.setUsername(username);
                 newUser.setGender(sex);
                 newUser.setLocale((String) map.get("country.title"));
