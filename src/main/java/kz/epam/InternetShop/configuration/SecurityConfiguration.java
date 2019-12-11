@@ -1,12 +1,15 @@
 package kz.epam.InternetShop.configuration;
 
+import kz.epam.InternetShop.model.Role;
+import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.repository.UserRepository;
 import kz.epam.InternetShop.service.impl.AuthenticationProviderImpl;
-import kz.epam.InternetShop.service.impl.ResourceServerTokenServicesImpl;
 import kz.epam.InternetShop.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +33,7 @@ import org.springframework.web.filter.CompositeFilter;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -48,21 +52,82 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .antMatcher("/**")
                 .authorizeRequests()
                 .antMatchers("/", "/login/**", "/registration**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin().loginPage("/login")
                 .and()
-                .logout().permitAll();
+                .logout().logoutSuccessUrl("/").permitAll()
+                .and()
+                .csrf().disable();
 
         http.addFilterBefore(ssoFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        http.csrf().disable();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean("googlePrincipalExtractor")
+    public PrincipalExtractor googlePrincipalExtractor() {
+        return map -> {
+            String username = (String) map.get("email");
+
+            User user = userRepository.findByUsername(username).orElseGet(() -> {
+                User newUser = new User();
+
+                newUser.setFullName((String) map.get("name"));
+                newUser.setUsername(username);
+                newUser.setGender((String) map.get("gender"));
+                newUser.setLocale((String) map.get("locale"));
+                newUser.setPassword(passwordEncoder().encode("oauth2client"));
+                newUser.setAuthority(Collections.singleton(Role.ROLE_USER));
+                newUser.setEnabled(1);
+
+                return newUser;
+            });
+            return userRepository.save(user);
+        };
+    }
+
+    @Bean("vKontaktePrincipalExtractor")
+    public PrincipalExtractor vKontaktePrincipalExtractor() {
+        return map -> {
+            String username = (String) map.get("screen_name");
+
+            User user = userRepository.findByUsername(username).orElseGet(() -> {
+                User newUser = new User();
+                String sex = "";
+
+                switch ((Integer) map.get("sex")) {
+                    case 0:
+                        sex = "";
+                        break;
+                    case 1:
+                        sex = "woman";
+                        break;
+                    case 2:
+                        sex = "man";
+                        break;
+                    default:
+                        sex = "empty";
+                        break;
+                }
+
+                newUser.setFullName((String) map.get("first_name") + map.get("last_name"));
+                newUser.setUsername(username);
+                newUser.setGender(sex);
+                newUser.setLocale((String) map.get("country.title"));
+                newUser.setPassword(passwordEncoder().encode("oauth2client"));
+                newUser.setAuthority(Collections.singleton(Role.ROLE_USER));
+                newUser.setEnabled(1);
+
+                return newUser;
+            });
+            return userRepository.save(user);
+        };
     }
 
     @Bean("customUserDetailsService")
@@ -100,6 +165,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new ResourceServerProperties();
     }
 
+    @Bean
+    @ConfigurationProperties("vkontakte.client")
+    public AuthorizationCodeResourceDetails vKontakte() {
+        return new AuthorizationCodeResourceDetails();
+    }
+
+    @Bean
+    @ConfigurationProperties("vkontakte.resource")
+    public ResourceServerProperties vKontakteResource() {
+        return new ResourceServerProperties();
+    }
+
     private Filter ssoFilter() {
 
         CompositeFilter filter = new CompositeFilter();
@@ -109,14 +186,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 new OAuth2ClientAuthenticationProcessingFilter("/login/google");
         OAuth2RestTemplate googleTemplate = new OAuth2RestTemplate(google(), oAuth2ClientContext);
         googleFilter.setRestTemplate(googleTemplate);
-        ResourceServerTokenServicesImpl googleTokenService =
-                new ResourceServerTokenServicesImpl(googleResource().getUserInfoUri(), google().getClientId());
+        UserInfoTokenServices googleTokenService =
+                new UserInfoTokenServices(googleResource().getUserInfoUri(), google().getClientId());
         googleTokenService.setRestTemplate(googleTemplate);
+        googleTokenService.setPrincipalExtractor(googlePrincipalExtractor());
         googleFilter.setTokenServices(googleTokenService);
-        googleTokenService.setUserRepository(userRepository);
-        googleTokenService.setPasswordEncoder(passwordEncoder());
 
         filterList.add(googleFilter);
+
+        OAuth2ClientAuthenticationProcessingFilter vKontakteFilter =
+                new OAuth2ClientAuthenticationProcessingFilter("/login/vk");
+        OAuth2RestTemplate vKontakteTemplate = new OAuth2RestTemplate(vKontakte(), oAuth2ClientContext);
+        vKontakteFilter.setRestTemplate(vKontakteTemplate);
+        UserInfoTokenServices vKontakteTokenService =
+                new UserInfoTokenServices(vKontakteResource().getUserInfoUri(), vKontakte().getClientId());
+        vKontakteTokenService.setRestTemplate(vKontakteTemplate);
+        vKontakteTokenService.setPrincipalExtractor(vKontaktePrincipalExtractor());
+        vKontakteFilter.setTokenServices(vKontakteTokenService);
+
+        filterList.add(vKontakteFilter);
 
         filter.setFilters(filterList);
 

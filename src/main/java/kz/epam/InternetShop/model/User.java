@@ -39,7 +39,6 @@ public class User implements UserDetails {
     private String gender;
     @Column(name = "LOCALE")
     private String locale;
-    @NotBlank
     @Column(name = "ADDRESS")
     private String address;
     @Column(name = "ENABLED")
