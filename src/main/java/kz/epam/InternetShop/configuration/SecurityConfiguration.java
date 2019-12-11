@@ -41,6 +41,9 @@ import java.util.List;
 @EnableOAuth2Client
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private static final String GOOGLE_LOGIN_URL = "/login/google";
+    private static final String VKONTAKTE_LOGIN_URL = "/login/vk";
+
     private UserRepository userRepository;
     private OAuth2ClientContext oAuth2ClientContext;
 
@@ -182,31 +185,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         CompositeFilter filter = new CompositeFilter();
         List<Filter> filterList = new ArrayList<>();
 
-        OAuth2ClientAuthenticationProcessingFilter googleFilter =
-                new OAuth2ClientAuthenticationProcessingFilter("/login/google");
-        OAuth2RestTemplate googleTemplate = new OAuth2RestTemplate(google(), oAuth2ClientContext);
-        googleFilter.setRestTemplate(googleTemplate);
-        UserInfoTokenServices googleTokenService =
-                new UserInfoTokenServices(googleResource().getUserInfoUri(), google().getClientId());
-        googleTokenService.setRestTemplate(googleTemplate);
-        googleTokenService.setPrincipalExtractor(googlePrincipalExtractor());
-        googleFilter.setTokenServices(googleTokenService);
-
-        filterList.add(googleFilter);
-
-        OAuth2ClientAuthenticationProcessingFilter vKontakteFilter =
-                new OAuth2ClientAuthenticationProcessingFilter("/login/vk");
-        OAuth2RestTemplate vKontakteTemplate = new OAuth2RestTemplate(vKontakte(), oAuth2ClientContext);
-        vKontakteFilter.setRestTemplate(vKontakteTemplate);
-        UserInfoTokenServices vKontakteTokenService =
-                new UserInfoTokenServices(vKontakteResource().getUserInfoUri(), vKontakte().getClientId());
-        vKontakteTokenService.setRestTemplate(vKontakteTemplate);
-        vKontakteTokenService.setPrincipalExtractor(vKontaktePrincipalExtractor());
-        vKontakteFilter.setTokenServices(vKontakteTokenService);
-
-        filterList.add(vKontakteFilter);
+        filterList.add(authenticationByExistProvider(google(), googleResource(), GOOGLE_LOGIN_URL, googlePrincipalExtractor()));
+        filterList.add(authenticationByExistProvider(vKontakte(), vKontakteResource(), VKONTAKTE_LOGIN_URL, vKontaktePrincipalExtractor()));
 
         filter.setFilters(filterList);
+
+        return filter;
+    }
+
+    private Filter authenticationByExistProvider(AuthorizationCodeResourceDetails resourceDetails,
+                                                 ResourceServerProperties serverProperties,
+                                                 String loginUrl, PrincipalExtractor principalExtractor) {
+
+        OAuth2ClientAuthenticationProcessingFilter filter =
+                new OAuth2ClientAuthenticationProcessingFilter(loginUrl);
+        OAuth2RestTemplate template = new OAuth2RestTemplate(resourceDetails, oAuth2ClientContext);
+        filter.setRestTemplate(template);
+        UserInfoTokenServices tokenServices =
+                new UserInfoTokenServices(serverProperties.getUserInfoUri(), resourceDetails.getClientId());
+        tokenServices.setRestTemplate(template);
+        tokenServices.setPrincipalExtractor(principalExtractor);
+        filter.setTokenServices(tokenServices);
 
         return filter;
     }
