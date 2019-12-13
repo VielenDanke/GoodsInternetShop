@@ -2,7 +2,6 @@ package kz.epam.InternetShop.repository;
 
 import kz.epam.InternetShop.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;

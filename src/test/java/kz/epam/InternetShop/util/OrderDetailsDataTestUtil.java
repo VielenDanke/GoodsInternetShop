@@ -1,7 +1,6 @@
 package kz.epam.InternetShop.util;
 
 import kz.epam.InternetShop.model.Goods;
-import kz.epam.InternetShop.model.GoodsCategory;
 import kz.epam.InternetShop.model.Order;
 import kz.epam.InternetShop.model.OrderDetails;
 

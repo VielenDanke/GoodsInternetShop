@@ -2,7 +2,6 @@ package kz.epam.InternetShop.service.interfaces;
 
 import kz.epam.InternetShop.model.Goods;
 import kz.epam.InternetShop.model.GoodsCategory;
-import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.model.filter.GoodsFilter;
 import kz.epam.InternetShop.service.CRUDInterface;
 

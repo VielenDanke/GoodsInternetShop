@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static kz.epam.InternetShop.util.ValidationUtil.checkNotFound;
-
 @Service
 public class GoodsBasketServiceImpl implements GoodsBasketService {
     private static final int ZERO_STATUS = 0;

@@ -5,6 +5,7 @@ import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.repository.UserRepository;
 import kz.epam.InternetShop.service.impl.AuthenticationProviderImpl;
 import kz.epam.InternetShop.service.impl.UserDetailsServiceImpl;
+import kz.epam.InternetShop.service.impl.VkInfoTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
@@ -98,38 +99,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean("vKontaktePrincipalExtractor")
     public PrincipalExtractor vKontaktePrincipalExtractor() {
         return map -> {
-            String username = (String) map.get("screen_name");
+            String firstName = (String) map.get("first_name");
+            String lastName = (String) map.get("last_name");
 
-            User user = userRepository.findByUsername(username).orElseGet(() -> {
-                User newUser = new User();
-                String sex = "";
-                String firstName = (String) map.get("first_name");
-                String lastName = (String) map.get("last_name");
+            User user = userRepository.findByUsername(firstName + lastName).orElseGet(() -> {
+               User newUser = new User();
 
-                switch ((Integer) map.get("sex")) {
-                    case 0:
-                        sex = "";
-                        break;
-                    case 1:
-                        sex = "woman";
-                        break;
-                    case 2:
-                        sex = "man";
-                        break;
-                    default:
-                        sex = "empty";
-                        break;
-                }
+               newUser.setUsername(firstName + lastName);
+               newUser.setPassword(passwordEncoder().encode("oauth2client"));
+               newUser.setAuthority(Collections.singleton(Role.ROLE_USER));
+               newUser.setEnabled(1);
 
-                newUser.setFullName(firstName + lastName);
-                newUser.setUsername(username);
-                newUser.setGender(sex);
-                newUser.setLocale((String) map.get("country.title"));
-                newUser.setPassword(passwordEncoder().encode("oauth2client"));
-                newUser.setAuthority(Collections.singleton(Role.ROLE_USER));
-                newUser.setEnabled(1);
-
-                return newUser;
+               return newUser;
             });
             return userRepository.save(user);
         };
@@ -187,12 +168,29 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         CompositeFilter filter = new CompositeFilter();
         List<Filter> filterList = new ArrayList<>();
 
-        filterList.add(authenticationByExistProvider(google(), googleResource(), GOOGLE_LOGIN_URL, googlePrincipalExtractor()));
-        filterList.add(authenticationByExistProvider(vKontakte(), vKontakteResource(), VKONTAKTE_LOGIN_URL, vKontaktePrincipalExtractor()));
+        Filter googleFilter = authenticationByExistProvider(google(), googleResource(), GOOGLE_LOGIN_URL, googlePrincipalExtractor());
+        /*
+        Need to finish VK authorization, returning all fields null when receiving token from VK
+         */
+//        Filter vkFilter = authenticationByExistProvider(vKontakte(), vKontakteResource(), VKONTAKTE_LOGIN_URL, vKontaktePrincipalExtractor());
+
+        OAuth2ClientAuthenticationProcessingFilter vkFilter =
+                new OAuth2ClientAuthenticationProcessingFilter("/login/vk");
+        OAuth2RestTemplate template = new OAuth2RestTemplate(vKontakte(), oAuth2ClientContext);
+        vkFilter.setRestTemplate(template);
+        VkInfoTokenService tokenServices =
+                new VkInfoTokenService(vKontakteResource().getUserInfoUri(), vKontakte().getClientId());
+        tokenServices.setRestTemplate(template);
+        tokenServices.setUserRepository(userRepository);
+        tokenServices.setPasswordEncoder(passwordEncoder());
+        vkFilter.setTokenServices(tokenServices);
+
+        filterList.add(googleFilter);
+        filterList.add(vkFilter);
 
         filter.setFilters(filterList);
 
-        return filter;
+        return vkFilter;
     }
 
     private Filter authenticationByExistProvider(AuthorizationCodeResourceDetails resourceDetails,
