@@ -3,13 +3,12 @@ package kz.epam.InternetShop.service;
 import kz.epam.InternetShop.model.Goods;
 import kz.epam.InternetShop.model.GoodsCategory;
 import kz.epam.InternetShop.repository.GoodsRepository;
-import kz.epam.InternetShop.service.interfaces.GoodsService;
+import kz.epam.InternetShop.util.ValidationUtil;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,9 +21,8 @@ import static kz.epam.InternetShop.util.GoodsDataTestUtil.GOODS_LIST;
 @SpringBootTest
 public class GoodsServiceTest {
 
-    private final static String GOODS_EXAMPLE_STRING = "toys";
+    public final static String EXAMPLE_STRING = "example";
 
-    private GoodsService goodsService;
     private Goods goods;
 
     @MockBean
@@ -34,7 +32,7 @@ public class GoodsServiceTest {
     public void saveGoods() {
         goods = new Goods();
         Mockito.doReturn(goods).when(goodsRepository).save(goods);
-        Goods goodsAfterSave = goodsService.save(goods);
+        Goods goodsAfterSave = goodsRepository.save(goods);
         Mockito.verify(goodsRepository, Mockito.times(1)).save(goods);
         Assert.assertEquals(goods, goodsAfterSave);
     }
@@ -42,7 +40,7 @@ public class GoodsServiceTest {
     @Test
     public void deleteGoods() {
         goods = new Goods();
-        goodsService.delete(goods);
+        goodsRepository.delete(goods);
         Mockito.verify(goodsRepository, Mockito.times(1)).delete(goods);
     }
 
@@ -51,8 +49,12 @@ public class GoodsServiceTest {
         goods = new Goods();
         goods.setId((long) 1);
         Mockito.doReturn(false).when(goodsRepository).existsById((long) 1);
-        goodsService.save(goods);
-        goodsService.delete(goods);
+        boolean found = goodsRepository.existsById((long) 1);
+        ValidationUtil.checkNotFound(found, EXAMPLE_STRING);
+
+        goodsRepository.save(goods);
+        goodsRepository.delete(goods);
+
         Mockito.verify(goodsRepository, Mockito.times(0)).save(goods);
         Mockito.verify(goodsRepository, Mockito.times(0)).delete(goods);
     }
@@ -76,22 +78,17 @@ public class GoodsServiceTest {
 
     @Test
     public void shouldReturnGoodsByGoodsNameLike() {
-        Mockito.doReturn(GOODS_LIST).when(goodsRepository).findAllByNameLike(GOODS_EXAMPLE_STRING);
-        List<Goods> allGoodsByNameLike = goodsRepository.findAllByNameLike(GOODS_EXAMPLE_STRING);
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByNameLike(GOODS_EXAMPLE_STRING);
+        Mockito.doReturn(GOODS_LIST).when(goodsRepository).findAllByNameLike(EXAMPLE_STRING);
+        List<Goods> allGoodsByNameLike = goodsRepository.findAllByNameLike(EXAMPLE_STRING);
+        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByNameLike(EXAMPLE_STRING);
         Assert.assertNotNull(allGoodsByNameLike);
     }
 
     @Test
     public void shouldReturnGoodsByDescriptionLike() {
-        Mockito.doReturn(GOODS_LIST).when(goodsRepository).findAllByDescriptionLike(GOODS_EXAMPLE_STRING);
-        List<Goods> allGoodsByDescriptionLike = goodsRepository.findAllByDescriptionLike(GOODS_EXAMPLE_STRING);
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByDescriptionLike(GOODS_EXAMPLE_STRING);
+        Mockito.doReturn(GOODS_LIST).when(goodsRepository).findAllByDescriptionLike(EXAMPLE_STRING);
+        List<Goods> allGoodsByDescriptionLike = goodsRepository.findAllByDescriptionLike(EXAMPLE_STRING);
+        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByDescriptionLike(EXAMPLE_STRING);
         Assert.assertNotNull(allGoodsByDescriptionLike);
-    }
-
-    @Autowired
-    public void setGoodsService(GoodsService goodsService) {
-        this.goodsService = goodsService;
     }
 }
