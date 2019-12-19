@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import static kz.epam.InternetShop.util.GoodsDataTestUtil.GOODS_LIST;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@TestPropertySource(locations="classpath:test.properties")
 public class GoodsServiceTest {
 
     public final static String EXAMPLE_STRING = "example";

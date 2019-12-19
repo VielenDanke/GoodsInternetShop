@@ -2,6 +2,7 @@ package kz.epam.InternetShop.util;
 
 import kz.epam.InternetShop.model.Role;
 import kz.epam.InternetShop.model.User;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,7 +14,7 @@ public class UserTestDataTestUtil {
     public static final String ADDRESS_FOR_SEARCH = "Караганда";
     public static final String ADDRESS_FOR_UPDATE = "Москва, ул. Петроградская 78-44";
     public static final String FULL_NAME_FOR_SEARCH = "Аманболов";
-    public static final Set<Role> ROLES =  new HashSet<>(Arrays.asList(Role.ROLE_USER));
+    public static final Set<GrantedAuthority> ROLES =  new HashSet<>(Arrays.asList(Role.ROLE_USER));
 
     public static final User NEW_USER = User.builder()
             .username("newuser@mail.ru")

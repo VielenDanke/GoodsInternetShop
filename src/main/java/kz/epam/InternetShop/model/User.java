@@ -50,7 +50,7 @@ public class User implements UserDetails {
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID"))
     @Enumerated(EnumType.STRING)
-    private Set<Role> authority = new HashSet<>();
+    private Set<GrantedAuthority> authority = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
