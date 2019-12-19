@@ -17,14 +17,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static kz.epam.InternetShop.service.impl.UserServiceImpl.wrapWithWildcard;
+import static kz.epam.InternetShop.util.TestFieldsUtil.ADDRESS_FOR_SEARCH;
+import static kz.epam.InternetShop.util.TestFieldsUtil.FULL_NAME_FOR_SEARCH;
+import static kz.epam.InternetShop.util.TestFieldsUtil.USERNAME_FOR_SEARCH;
 import static kz.epam.InternetShop.util.UserTestDataTestUtil.*;
-import static kz.epam.InternetShop.util.UserTestDataTestUtil.FULL_NAME_FOR_SEARCH;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(locations = "classpath:test.properties")
-
-public class UserServiceIT {
+public class UserServiceTest {
 
     @MockBean
     private UserRepository repository;
