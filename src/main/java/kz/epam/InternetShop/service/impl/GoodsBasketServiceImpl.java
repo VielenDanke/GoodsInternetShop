@@ -35,7 +35,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
 
     @Override
     public void clear(User user) {
-        Order basket =  getBasket(user);
+        Order basket = getBasket(user);
         orderRepository.delete(basket);
     }
 
@@ -50,8 +50,8 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
 
     @Override
-    public void setStatusToOne(User user) throws NotAccessibleGoodsException{
-        Order basket =  getBasket(user);
+    public void setStatusToOne(User user) throws NotAccessibleGoodsException {
+        Order basket = getBasket(user);
         basket.setOrderDetails(getAllOrderDetails(user));
         checkAccessibility(basket);
         basket.setStatus(ONE_STATUS);

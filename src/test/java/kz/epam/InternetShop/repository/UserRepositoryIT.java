@@ -1,6 +1,7 @@
 package kz.epam.InternetShop.repository;
 
 import kz.epam.InternetShop.model.User;
+import kz.epam.InternetShop.util.TestFieldsUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,10 +53,10 @@ public class UserRepositoryIT {
     @Transactional
     @Rollback
     public void findByUsernameLike() {
-        List<User> actualUserList = userRepository.findByUsernameLike(wrapWithWildcard(USERNAME_FOR_SEARCH));
+        List<User> actualUserList = userRepository.findByUsernameLike(wrapWithWildcard(TestFieldsUtil.USERNAME_FOR_SEARCH));
         List<User> expectedUserList = USERS
                 .stream()
-                .filter(user -> user.getUsername().contains(USERNAME_FOR_SEARCH))
+                .filter(user -> user.getUsername().contains(TestFieldsUtil.USERNAME_FOR_SEARCH))
                 .collect(Collectors.toList());
         Assert.assertEquals(expectedUserList.size(), actualUserList.size());
         Assert.assertEquals(true, expectedUserList.containsAll(actualUserList));
@@ -65,10 +66,10 @@ public class UserRepositoryIT {
     @Transactional
     @Rollback
     public void findByAddressLike() {
-        List<User> actualUserList = userRepository.findByAddressLike(wrapWithWildcard(ADDRESS_FOR_SEARCH));
+        List<User> actualUserList = userRepository.findByAddressLike(wrapWithWildcard(TestFieldsUtil.ADDRESS_FOR_SEARCH));
         List<User> expectedUserList = USERS
                 .stream()
-                .filter(user -> user.getAddress().contains(ADDRESS_FOR_SEARCH))
+                .filter(user -> user.getAddress().contains(TestFieldsUtil.ADDRESS_FOR_SEARCH))
                 .collect(Collectors.toList());
         Assert.assertEquals(expectedUserList.size(), actualUserList.size());
         Assert.assertEquals(true, expectedUserList.containsAll(actualUserList));
@@ -78,10 +79,10 @@ public class UserRepositoryIT {
     @Transactional
     @Rollback
     public void findByFullNameLike() {
-        List<User> actualUserList = userRepository.findByFullNameLike(wrapWithWildcard(FULL_NAME_FOR_SEARCH));
+        List<User> actualUserList = userRepository.findByFullNameLike(wrapWithWildcard(TestFieldsUtil.FULL_NAME_FOR_SEARCH));
         List<User> expectedUserList = USERS
                 .stream()
-                .filter(user -> user.getFullName().contains(FULL_NAME_FOR_SEARCH))
+                .filter(user -> user.getFullName().contains(TestFieldsUtil.FULL_NAME_FOR_SEARCH))
                 .collect(Collectors.toList());
         Assert.assertEquals(expectedUserList.size(), actualUserList.size());
         Assert.assertEquals(true, expectedUserList.containsAll(actualUserList));
@@ -100,10 +101,10 @@ public class UserRepositoryIT {
     @Rollback
     public void updateUser() {
         User user = USERS.get(0);
-        user.setAddress(ADDRESS_FOR_UPDATE);
+        user.setAddress(TestFieldsUtil.ADDRESS_FOR_UPDATE);
         userRepository.save(user);
         String actualAddress = userRepository.findById(user.getId()).get().getAddress();
-        Assert.assertEquals(ADDRESS_FOR_UPDATE, actualAddress);
+        Assert.assertEquals(TestFieldsUtil.ADDRESS_FOR_UPDATE, actualAddress);
     }
 
     @Test

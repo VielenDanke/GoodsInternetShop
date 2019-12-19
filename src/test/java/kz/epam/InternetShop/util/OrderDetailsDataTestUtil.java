@@ -12,16 +12,15 @@ import static kz.epam.InternetShop.util.GoodsCategoryDataTestUtil.GOODS_CATEGORI
 import static kz.epam.InternetShop.util.UserTestDataTestUtil.USERS;
 
 public class OrderDetailsDataTestUtil {
-    public static final Integer STATUS_IS_ONE = 1;
 
     public static final Order ORDER1 = Order.builder()
             .creationDate(LocalDateTime.now())
-            .status(STATUS_IS_ONE)
+            .status(TestFieldsUtil.STATUS_IS_ONE)
             .user(USERS.get(0)).build();
 
     public static final Order ORDER2 = Order.builder()
             .creationDate(LocalDateTime.now())
-            .status(STATUS_IS_ONE)
+            .status(TestFieldsUtil.STATUS_IS_ONE)
             .user(USERS.get(0)).build();
 
     public static final List<Goods> ORDER1_GOODS = Arrays.asList(
