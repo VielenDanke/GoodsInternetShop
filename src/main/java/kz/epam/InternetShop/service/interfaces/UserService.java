@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface UserService<E extends User> extends CRUDInterface<User> {
 
+    boolean existsById(Long id);
+
+    void deleteAll();
+
     List<E> findByUsernameLike(String usernameLike);
 
     List<E> findByAddressLike(String addressLike);
