@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @AllArgsConstructor
-
 public class GoodsTO {
     private Long id;
     private String name;

@@ -4,18 +4,23 @@ import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.service.CRUDInterface;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UserService<E extends User> extends CRUDInterface<User> {
+public interface UserService extends CRUDInterface<User> {
 
-    boolean existsById(Long id);
+    User findById(Long id);
 
     void deleteAll();
 
-    List<E> findByUsernameLike(String usernameLike);
+    List<User> findByUsernameLike(String usernameLike);
 
-    List<E> findByAddressLike(String addressLike);
+    List<User> findByAddressLike(String addressLike);
 
-    List<E> findByFullNameLike(String fullNameLike);
+    List<User> findByFullNameLike(String fullNameLike);
 
     void deleteByUsername(String username);
+
+    List<User> findAll();
+
+    Optional<User> findByUsername(String username);
 }

@@ -66,7 +66,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     @Override
     public Order getBasket(User user) {
         Order result;
-        List<Order> orders = orderRepository.findAllByUserAndStatus(user, ZERO_STATUS );
+        List<Order> orders = orderRepository.findAllByUserAndStatus(user, ZERO_STATUS);
         if (orders.size()>0) {
             result = orders.get(0);
         } else {

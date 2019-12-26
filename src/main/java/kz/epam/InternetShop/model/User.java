@@ -5,12 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +19,7 @@ import java.util.Set;
 @Data
 @Builder
 @AllArgsConstructor
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AUTO_SEQ")
@@ -29,10 +27,10 @@ public class User implements UserDetails {
     @Column(name = "ID")
     private Long id;
     @Email(message = "Email is not correct")
-    @NotBlank
+    @NotBlank(message = "Username cannot be empty, you should use email as username")
     @Column(name = "USERNAME", nullable = false)
     private String username;
-    @NotBlank
+    @NotBlank(message = "Password cannot be empty")
     @Column(name = "PASSWORD")
     private String password;
     @Column(name = "GENDER")
@@ -46,6 +44,11 @@ public class User implements UserDetails {
     @NotBlank
     @Column(name = "FULL_NAME")
     private String fullName;
+    @Column(name = "AUTH_PROVIDER")
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+    @Column(name = "PROVIDER_ID")
+    private String providerId;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID"))
@@ -54,30 +57,4 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getAuthority();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-
-        return getEnabled() == 1;
-    }
 }
