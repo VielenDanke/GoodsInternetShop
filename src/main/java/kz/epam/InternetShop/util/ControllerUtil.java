@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class ControllerUtil {
+import static kz.epam.InternetShop.util.ConstantUtil.ERROR;
 
-    private static final String ERROR = "Error";
+public class ControllerUtil {
 
     public static Map<String, String> getErrors(BindingResult bindingResult) {
         Collector<FieldError, ?, Map<String, String>> collector = Collectors.toMap(

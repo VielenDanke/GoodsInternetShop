@@ -1,6 +1,7 @@
 package kz.epam.InternetShop.controller;
 
 import kz.epam.InternetShop.model.User;
+import kz.epam.InternetShop.payload.UpdateRequest;
 import kz.epam.InternetShop.security.UserPrincipal;
 import kz.epam.InternetShop.service.annotation.CurrentUser;
 import kz.epam.InternetShop.service.annotation.IsAdmin;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,10 +53,14 @@ public class UserController {
 
     @PutMapping("/update")
     @IsUser
-    public User updateUser(@CurrentUser UserPrincipal userPrincipal) {
+    public User updateUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody UpdateRequest updateRequest) {
         User userFromDatabaseById = userService.findById(userPrincipal.getId());
-        userFromDatabaseById.setAddress(userPrincipal.getFullAddress());
-        userFromDatabaseById.setFullName(userPrincipal.getPersonFullName());
+        if (!StringUtils.isEmpty(updateRequest.getAddress())) {
+            userFromDatabaseById.setAddress(updateRequest.getAddress());
+        }
+        if (!StringUtils.isEmpty(updateRequest.getFullName())) {
+            userFromDatabaseById.setFullName(updateRequest.getFullName());
+        }
         return userService.save(userFromDatabaseById);
     }
 
