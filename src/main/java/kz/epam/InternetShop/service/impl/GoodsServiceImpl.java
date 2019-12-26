@@ -53,7 +53,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Goods save(Goods goods) throws NotFoundException {
-        checkNotFound(goods);
+        if (goods.getId()!=null) {
+            checkNotFound(goods);
+        }
         return repository.save(goods);
     }
 
