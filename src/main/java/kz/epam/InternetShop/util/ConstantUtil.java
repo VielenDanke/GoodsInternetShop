@@ -21,6 +21,8 @@ public class ConstantUtil {
     public static final String BASE_URI_MATCHER = "/**";
     public static final String AUTHORIZATION_SECURITY_HEADER = "Authorization";
     public static final String BEARER = "Bearer ";
+    public static final String AUTHORIZATION_USER_TOKEN = "user_token";
 
+    public static final int AUTHORIZATION_COOKIE_EXPIRE_SECONDS = 7200;
     public static final int COOKIE_EXPIRE_SECONDS = 180;
 }

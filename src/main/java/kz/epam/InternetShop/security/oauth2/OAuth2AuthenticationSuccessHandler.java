@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -96,6 +97,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = redirectUri.orElse(LOCALHOST_MAIN_PAGE);
         String token = tokenProvider.createToken(user);
+
+        // Saving token in cookie for validation in @CookieValidatorFilter
+        CookieUtil.addCookie(response, AUTHORIZATION_USER_TOKEN, token, AUTHORIZATION_COOKIE_EXPIRE_SECONDS);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam(TOKEN, token)

@@ -1,5 +1,6 @@
 package kz.epam.InternetShop.security;
 
+import kz.epam.InternetShop.repository.UserRepository;
 import kz.epam.InternetShop.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import kz.epam.InternetShop.security.oauth2.OAuth2AuthenticationFailureHandler;
 import kz.epam.InternetShop.security.oauth2.OAuth2AuthenticationSuccessHandler;
@@ -11,7 +12,6 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -36,6 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    private final UserRepository userRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -101,6 +102,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         tokenAuthenticationFilter.setTokenProvider(tokenProvider);
         tokenAuthenticationFilter.setCustomUserDetailsService(customUserDetailsService);
         return tokenAuthenticationFilter;
+    }
+
+    @Bean
+    public CookieValidatorFilter cookieValidatorFilter() {
+        CookieValidatorFilter cookieValidatorFilter = new CookieValidatorFilter();
+        cookieValidatorFilter.setTokenProvider(tokenProvider);
+        cookieValidatorFilter.setUserRepository(userRepository);
+        return cookieValidatorFilter;
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
