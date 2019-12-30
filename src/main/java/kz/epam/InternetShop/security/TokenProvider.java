@@ -3,23 +3,29 @@ package kz.epam.InternetShop.security;
 import io.jsonwebtoken.*;
 import kz.epam.InternetShop.configuration.AppProperties;
 import kz.epam.InternetShop.model.User;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
+import static kz.epam.InternetShop.util.ConstantUtil.AUTHORIZATION_SECURITY_HEADER;
+import static kz.epam.InternetShop.util.ConstantUtil.BEARER;
+
 @Service
+@RequiredArgsConstructor
 public class TokenProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenProvider.class);
 
-    private AppProperties appProperties;
-
-    public TokenProvider(AppProperties appProperties) {
-        this.appProperties = appProperties;
-    }
+    private final AppProperties appProperties;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public String createToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
@@ -55,6 +61,19 @@ public class TokenProvider {
                 .getBody();
 
         return Long.parseLong(claims.getSubject());
+    }
+
+    public UsernamePasswordAuthenticationToken getAuthenticationByUserFromDbWithId(String token) {
+        UserDetails userDetails = customUserDetailsService.loadUserById(getUserIdFromToken(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    public String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_SECURITY_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
+            return bearerToken.substring(7, bearerToken.length());
+        }
+        return null;
     }
 
     public boolean validateToken(String authToken) {

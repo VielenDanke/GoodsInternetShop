@@ -100,7 +100,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter();
         tokenAuthenticationFilter.setTokenProvider(tokenProvider);
-        tokenAuthenticationFilter.setCustomUserDetailsService(customUserDetailsService);
         return tokenAuthenticationFilter;
     }
 
@@ -108,7 +107,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public CookieValidatorFilter cookieValidatorFilter() {
         CookieValidatorFilter cookieValidatorFilter = new CookieValidatorFilter();
         cookieValidatorFilter.setTokenProvider(tokenProvider);
-        cookieValidatorFilter.setUserRepository(userRepository);
         return cookieValidatorFilter;
     }
 
