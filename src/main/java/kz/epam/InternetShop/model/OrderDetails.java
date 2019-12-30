@@ -35,4 +35,7 @@ public class OrderDetails {
     @JoinColumn(name = "GOODS_ID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Goods goods;
+
+    @Transient
+    private boolean available;
 }
