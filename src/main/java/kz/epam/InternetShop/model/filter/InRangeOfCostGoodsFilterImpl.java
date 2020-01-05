@@ -1,5 +1,7 @@
 package kz.epam.InternetShop.model.filter;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kz.epam.InternetShop.model.Goods;
 
 import java.util.List;
@@ -9,7 +11,10 @@ public class InRangeOfCostGoodsFilterImpl extends GoodsFilter {
     private Double lowCost;
     private Double highCost;
 
-    public InRangeOfCostGoodsFilterImpl(boolean active, Double lowCost, Double highCost) {
+    @JsonCreator
+    public InRangeOfCostGoodsFilterImpl(@JsonProperty("active") boolean active,
+                                        @JsonProperty("lowCost") Double lowCost,
+                                        @JsonProperty("highCost") Double highCost) {
         super(active);
         this.lowCost = lowCost;
         this.highCost = highCost;

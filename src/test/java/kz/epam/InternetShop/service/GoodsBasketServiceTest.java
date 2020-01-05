@@ -8,7 +8,7 @@ import kz.epam.InternetShop.repository.GoodsRepository;
 import kz.epam.InternetShop.repository.OrderDetailsRepository;
 import kz.epam.InternetShop.repository.OrderRepository;
 import kz.epam.InternetShop.service.interfaces.GoodsBasketService;
-import kz.epam.InternetShop.util.exception.NotAccessibleGoodsException;
+import kz.epam.InternetShop.util.exception.NotAvailableGoodsException;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -83,7 +83,7 @@ public class GoodsBasketServiceTest {
         Mockito.verify(orderRepository, Mockito.times(1)).save(basket);
     }
 
-    @Test(expected = NotAccessibleGoodsException.class)
+    @Test(expected = NotAvailableGoodsException.class)
     public void shouldThrowNotAccessibleGoodsExceptionWhenSetStatusToOne() {
         orderDetails.setCount(goods.getCount() + 5);
         goodsBasketService.setStatusToOne(user);
@@ -108,42 +108,36 @@ public class GoodsBasketServiceTest {
     @Test(expected = NotFoundException.class)
     public void shouldThrowNotFoundExceptionWhenSavingOrderDetailsInBasket() {
         Mockito.when(orderDetailsRepository.existsById(orderDetails.getId())).thenReturn(false);
-        goodsBasketService.saveOrderDetailsInBasket(Arrays.asList(orderDetails), user);
+        goodsBasketService.updateCountOrderDetailsInBasket(Arrays.asList(orderDetails), user);
         Mockito.verify(orderDetailsRepository, Mockito.times(1)).existsById(orderDetails.getId());
-    }
-
-    @Test(expected = NotAccessibleGoodsException.class)
-    public void shouldThrowNotNotAccessibleGoodsExceptionWhenSavingOrderDetailsInBasket() {
-        // total count of goods is less that count to the order
-        orderDetails.setCount(goods.getCount() + 5);
-        Mockito.when(orderDetailsRepository.existsById(orderDetails.getId())).thenReturn(true);
-
-        goodsBasketService.saveOrderDetailsInBasket(Arrays.asList(orderDetails), user);
-        Mockito.verify(orderDetailsRepository, Mockito.times(0)).delete(orderDetails);
-        Mockito.verify(orderDetailsRepository, Mockito.times(1)).save(orderDetails);
     }
 
     @Test
     public void shouldRunDeleteWhenSavingOrderDetailsInBasket() {
         // row of orderDetails with zero count must delete from the basket
         orderDetails.setCount(0);
-        Mockito.when(orderDetailsRepository.existsById(orderDetails.getId())).thenReturn(true);
+        Mockito.when(orderDetailsRepository.findById(orderDetails.getId())).thenReturn(Optional.of(orderDetails));
 
-        goodsBasketService.saveOrderDetailsInBasket(Arrays.asList(orderDetails), user);
+        goodsBasketService.updateCountOrderDetailsInBasket(Arrays.asList(orderDetails), user);
         Mockito.verify(orderDetailsRepository, Mockito.times(1)).delete(orderDetails);
         Mockito.verify(orderDetailsRepository, Mockito.times(0)).save(orderDetails);
     }
 
     @Test
     public void shouldUpdateOrderForOrderDetailsWhenSavingOrderDetailsInBasket() {
-        // after saving orderDetail must be in basket (orderDetails.getOrder = basket)
-        orderDetails.setOrder(null);
-        Mockito.when(orderDetailsRepository.existsById(orderDetails.getId())).thenReturn(true);
+        // after saving newOrderDetails must be in basket (newOrderDetails.getOrder = basket)
+        OrderDetails newOrderDetails = OrderDetails.builder()
+                .id(orderDetails.getId())
+                .count(goods.getCount())
+                .cost(goods.getCost())
+                .order(null)
+                .goods(goods).build();
+        Mockito.when(orderDetailsRepository.findById(newOrderDetails.getId())).thenReturn(Optional.of(orderDetails));
 
-        goodsBasketService.saveOrderDetailsInBasket(Arrays.asList(orderDetails), user);
+        goodsBasketService.updateCountOrderDetailsInBasket(Arrays.asList(newOrderDetails), user);
         Mockito.verify(orderDetailsRepository, Mockito.times(0)).delete(orderDetails);
-        Mockito.verify(orderDetailsRepository, Mockito.times(1)).save(orderDetails);
-        Assert.assertEquals(basket, orderDetails.getOrder());
+        Mockito.verify(orderDetailsRepository, Mockito.times(1))
+                .updateCount(orderDetails.getId(), orderDetails.getCount());
     }
 
     @Test(expected = NotFoundException.class)
@@ -174,7 +168,7 @@ public class GoodsBasketServiceTest {
 
     @Test
     public void shouldDeleteOrderDetails() {
-        Mockito.when(orderDetailsRepository.existsById(orderDetails.getId())).thenReturn(true);
+        Mockito.when(orderDetailsRepository.findById(orderDetails.getId())).thenReturn(Optional.of(orderDetails));
         goodsBasketService.removeFromBasket(orderDetails, user);
         Mockito.verify(orderDetailsRepository, Mockito.times(1)).delete(orderDetails);
     }

@@ -1,9 +1,11 @@
 package kz.epam.InternetShop.controller;
 
-import kz.epam.InternetShop.model.*;
-import kz.epam.InternetShop.model.TO.GoodsTO;
+import kz.epam.InternetShop.model.Order;
+import kz.epam.InternetShop.model.OrderDetails;
+import kz.epam.InternetShop.model.TO.OrderDetailsTO;
+import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.service.interfaces.GoodsBasketService;
-import kz.epam.InternetShop.util.exception.NotAccessibleGoodsException;
+import kz.epam.InternetShop.util.exception.NotAvailableGoodsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,12 +30,17 @@ public class GoodsBasketController {
     }
 
     @GetMapping("/basket/{userId}")
-    public List<GoodsTO> getBasketGoods(@PathVariable("userId") long userId) {
+    public List<OrderDetailsTO> getBasketGoods(@PathVariable("userId") long userId) {
         User user = User.builder().id(userId).build();
-        Long orderId = basketService.getBasket(user).getId();
+        Order basket = basketService.getBasket(user);
+        List<OrderDetailsTO> list = basketService.getAllOrderDetails(user)
+                .stream()
+                .map(od -> asTO(od))
+                .collect(Collectors.toList());
+
         return basketService.getAllOrderDetails(user)
                 .stream()
-                .map(od -> asTO(od.getGoods(), orderId))
+                .map(od -> asTO(od))
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +52,7 @@ public class GoodsBasketController {
     }
 
     @GetMapping("/basket/{userId}/order")
-    public ResponseEntity<String> placeOrder(@PathVariable("userId") long userId) throws NotAccessibleGoodsException {
+    public ResponseEntity<String> placeOrder(@PathVariable("userId") long userId) throws NotAvailableGoodsException {
         User user = User.builder().id(userId).build();
         basketService.setStatusToOne(user);     // throws NotAccessibleGoodsException
         return new ResponseEntity(HttpStatus.OK);
@@ -53,23 +60,25 @@ public class GoodsBasketController {
 
     @PostMapping(value = "/{userId}/toBasket", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createOrderDetailsInBasket(@Valid @RequestBody OrderDetails orderDetails,
-                                                                @PathVariable("userId") long userId) {
+                                                             @PathVariable("userId") long userId) {
         User user = User.builder().id(userId).build();
         basketService.createOrderDetailsInBasket(orderDetails, user);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PutMapping(value = "/basket/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveOrderDetailsInBasket(@Valid @RequestBody List<OrderDetails> orderDetailsList,
-                                                            @PathVariable("userId") long userId) {
+    public ResponseEntity<String> updateCountOrderDetailsInBasket(
+            @Valid @RequestBody List<OrderDetails> orderDetailsList,
+            @PathVariable("userId") long userId
+    ) {
         User user = User.builder().id(userId).build();
-        basketService.saveOrderDetailsInBasket(orderDetailsList, user);
+        basketService.updateCountOrderDetailsInBasket(orderDetailsList, user);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/basket/{userId}/{orderDetailsId}")
     public ResponseEntity<String> removeFromBasket( @PathVariable("orderDetailsId") long orderDetailsId,
-                                                        @PathVariable("userId") long userId) {
+                                                    @PathVariable("userId") long userId) {
         User user = User.builder().id(userId).build();
         OrderDetails orderDetails = OrderDetails.builder().id(orderDetailsId).build();
         basketService.removeFromBasket(orderDetails, user);

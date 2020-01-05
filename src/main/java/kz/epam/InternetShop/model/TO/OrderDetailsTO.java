@@ -5,17 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @NoArgsConstructor
 @Data
 @Builder
 @AllArgsConstructor
-public class GoodsTO {
+public class OrderDetailsTO {
     private Long id;
-    private String name;
+    private Long goodsId;
+    private String goodsName;
     private Double cost;
     private Integer count;
-    private String description;
-    private List<String> photos;
+    private String goodsPhoto;
+    private Long orderId;
+    private boolean available;
 }

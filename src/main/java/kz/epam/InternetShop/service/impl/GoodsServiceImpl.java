@@ -31,16 +31,6 @@ public class GoodsServiceImpl implements GoodsService {
         return applyFilters(repository.findAllByGoodsCategory(goodsCategory), filters);
     }
 
-    @Override
-    public List<Goods> findAllByNameLike(String nameLike, List<GoodsFilter> filters) {
-        return applyFilters(repository.findAllByNameLike(nameLike), filters);
-    }
-
-    @Override
-    public List<Goods> findAllByDescriptionLike(String descriptionLike, List<GoodsFilter> filters) {
-        return applyFilters(repository.findAllByDescriptionLike(descriptionLike),filters);
-    }
-
     private List<Goods> applyFilters(List<Goods> goodsList, List<GoodsFilter> filters) {
         List<Goods> results = goodsList;
         for (GoodsFilter filter : filters) {

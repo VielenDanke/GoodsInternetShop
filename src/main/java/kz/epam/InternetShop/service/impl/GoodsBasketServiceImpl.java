@@ -1,6 +1,5 @@
 package kz.epam.InternetShop.service.impl;
 
-import kz.epam.InternetShop.model.Goods;
 import kz.epam.InternetShop.model.Order;
 import kz.epam.InternetShop.model.OrderDetails;
 import kz.epam.InternetShop.model.User;
@@ -9,7 +8,7 @@ import kz.epam.InternetShop.repository.OrderDetailsRepository;
 import kz.epam.InternetShop.repository.OrderRepository;
 import kz.epam.InternetShop.service.interfaces.GoodsBasketService;
 import kz.epam.InternetShop.util.ValidationUtil;
-import kz.epam.InternetShop.util.exception.NotAccessibleGoodsException;
+import kz.epam.InternetShop.util.exception.NotAvailableGoodsException;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
 
     @Override
     public List<OrderDetails> getAllOrderDetails(User user) {
-        return orderDetailsRepository.findByOrder(getBasket(user));
+        return checkAvailability(orderDetailsRepository.findByOrder(getBasket(user)));
     }
 
     @Override
@@ -44,25 +43,36 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
 
     @Override
-    public void setStatusToOne(User user) throws NotAccessibleGoodsException {
+    public void setStatusToOne(User user) throws NotAvailableGoodsException {
         Order basket = getBasket(user);
-        checkAccessibility(basket);
+        checkAvailability(basket);
         basket.setStatus(ONE_STATUS);
         orderRepository.save(basket);
     }
 
-    private void checkAccessibility(Order order) {
+    private void checkAvailability(Order order) {
         List<OrderDetails> orderDetailsList = order.getOrderDetails();
-        if (orderDetailsList!=null && orderDetailsList.size()>0 )
-        order.getOrderDetails().forEach(orderDetails -> {
-                Long goodsId = orderDetails.getGoods().getId();
-                Integer availableCount = goodsRepository.findById(goodsId).get().getCount();
-                if (orderDetails.getCount()>availableCount) {
-                    throw new NotAccessibleGoodsException("Order contains unaccessible item.");
+        if (orderDetailsList!=null && orderDetailsList.size()>0)
+            checkAvailability(orderDetailsList).forEach(orderDetails -> {
+                if (!orderDetails.isAvailable()) {
+                    throw new NotAvailableGoodsException("Order contains unaccessible item.");
                 }
         });
     }
 
+    private List<OrderDetails> checkAvailability(List<OrderDetails> orderDetailsList) {
+            orderDetailsList.forEach(orderDetails -> {
+                Long goodsId = orderDetails.getGoods().getId();
+                Integer availableCount = goodsRepository.findById(goodsId).get().getCount();
+                if (orderDetails.getCount()>availableCount) {
+                    orderDetails.setAvailable(false);
+                } else {
+                    orderDetails.setAvailable(true);
+                }
+            });
+     return orderDetailsList;
+    }
+    
     @Override
     public Order getBasket(User user) {
         Order result;
@@ -78,44 +88,49 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
 
     @Override
     public OrderDetails createOrderDetailsInBasket(OrderDetails orderDetails, User user) {
+        OrderDetails targetOrderDetails;
         Order basket = getBasket(user);
-        OrderDetails newOrderDetails = OrderDetails.builder()
-                .order(basket)
-                .goods(orderDetails.getGoods())
-                .cost(orderDetails.getGoods().getCost())
-                .count(orderDetails.getCount()).build();
-        return orderDetailsRepository.save(newOrderDetails);
+        OrderDetails existingOrderDetails = orderDetailsRepository
+                .findByOrderAndGoodsAndCost(basket, orderDetails.getGoods(), orderDetails.getCost());
+        if (existingOrderDetails!=null) {
+            existingOrderDetails.setCount(existingOrderDetails.getCount() + orderDetails.getCount());
+            targetOrderDetails = existingOrderDetails;
+        } else {
+            targetOrderDetails = OrderDetails.builder()
+                    .order(basket)
+                    .goods(orderDetails.getGoods())
+                    .cost(orderDetails.getCost())
+                    .count(orderDetails.getCount()).build();
+        }
+        return orderDetailsRepository.save(targetOrderDetails);
     }
 
     @Override
-    public void saveOrderDetailsInBasket(List<OrderDetails> orderDetailsList, User user) throws NotFoundException{
-        Order basket = getBasket(user);
+    public void updateCountOrderDetailsInBasket(List<OrderDetails> orderDetailsList, User user) throws NotFoundException{
         orderDetailsList.forEach(od -> {
             if (od.getCount() == 0) {
-                removeFromBasket(od, user);
+                OrderDetails orderDetails = orderDetailsRepository.findById(od.getId()).orElse(null);
+                if (orderDetails!=null) {
+                    orderDetailsRepository.delete(orderDetails);
+                }
             } else {
-                checkNotFound(od);
-                od.setOrder(basket);
-                orderDetailsRepository.save(od);
+                Long basketId = getBasket(user).getId();
+                checkNotFound(od, basketId);
+                orderDetailsRepository.updateCount(od.getId(), od.getCount());
             }
         });
-        checkAccessibility(basket);
     }
 
     @Override
     public void removeFromBasket(OrderDetails orderDetails, User user) throws NotFoundException{
-        checkNotFound(orderDetails);
         Long basketId = getBasket(user).getId();
-        ValidationUtil.checkNotFound(orderDetails.getOrder()!=null&&orderDetails.getOrder().getId().equals(basketId),
-                                     "Item not found");
+        checkNotFound(orderDetails, basketId);
         orderDetailsRepository.delete(orderDetails);
     }
 
-    private void checkNotFound(OrderDetails orderDetails) throws NotFoundException{
-        Long orderDetailsId = orderDetails.getId();
-        if (orderDetailsId!=null) {
-            ValidationUtil.checkNotFound(orderDetailsRepository.existsById(orderDetailsId), "Item not found");
-        }
-
+    private void checkNotFound(OrderDetails orderDetails, Long basketId) throws NotFoundException{
+        OrderDetails targetOrderDetails = orderDetailsRepository.findById(orderDetails.getId()).orElse(null);
+        ValidationUtil.checkNotFound(targetOrderDetails!=null && targetOrderDetails.getOrder().getId().equals(basketId),
+                "Item not found");
     }
 }

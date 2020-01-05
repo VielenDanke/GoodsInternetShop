@@ -38,4 +38,7 @@ public class OrderDetails {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Goods goods;
+
+    @Transient
+    private boolean available;
 }
