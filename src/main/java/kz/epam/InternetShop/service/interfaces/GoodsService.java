@@ -11,8 +11,4 @@ public interface GoodsService extends CRUDInterface<Goods> {
     List<Goods> findAll(List<GoodsFilter> filters);
 
     List<Goods> findAllByGoodsCategory(GoodsCategory goodsCategory, List<GoodsFilter> filters);
-
-    List<Goods> findAllByNameLike(String nameLike, List<GoodsFilter> filters);
-
-    List<Goods> findAllByDescriptionLike(String descriptionLike, List<GoodsFilter> filters);
 }

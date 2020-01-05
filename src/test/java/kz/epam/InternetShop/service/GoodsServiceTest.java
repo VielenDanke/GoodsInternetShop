@@ -2,12 +2,11 @@ package kz.epam.InternetShop.service;
 
 import kz.epam.InternetShop.model.Goods;
 import kz.epam.InternetShop.model.GoodsCategory;
-import kz.epam.InternetShop.model.filter.GoodsFilter;
-import kz.epam.InternetShop.model.filter.InRangeOfCostGoodsFilterImpl;
+import kz.epam.InternetShop.model.filter.*;
 import kz.epam.InternetShop.repository.GoodsRepository;
 import kz.epam.InternetShop.service.interfaces.GoodsService;
-import kz.epam.InternetShop.util.TestFieldsUtil;
 import kz.epam.InternetShop.util.exception.NotFoundException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -20,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static kz.epam.InternetShop.util.TestFieldsUtil.RANDOM_NUMBER_RANGE_999;
 import static kz.epam.InternetShop.util.GoodsDataTestUtil.GOODS_LIST;
@@ -40,18 +40,74 @@ public class GoodsServiceTest {
     public void shouldReturnAllListOfGoodsWhenFilterList_IsEmpty() {
         Mockito.when(goodsRepository.findAll()).thenReturn(GOODS_LIST);
 
-        goodsService.findAll(new ArrayList<>());
+        List<Goods> actualList = goodsService.findAll(new ArrayList<>());
 
+        Mockito.verify(goodsRepository, Mockito.times(1)).findAll();
+        Assert.assertEquals(GOODS_LIST.size(),actualList.size());
+        Assert.assertTrue(GOODS_LIST.containsAll(actualList));
+    }
+
+    @Test
+    public void shouldReturnAllListOfGoodsWithAccessibleGoodsFilter() {
+        Mockito.when(goodsRepository.findAll()).thenReturn(GOODS_LIST);
+        int oldCount = GOODS_LIST.get(0).getCount();
+        GOODS_LIST.get(0).setCount(0);
+        List<Goods> expectedList = GOODS_LIST.stream().filter(g->g.getCount()>0).collect(Collectors.toList());
+
+        List<Goods> actualList = goodsService.findAll(Arrays.asList(new AccessibleGoodsFilterImpl(true)));
+
+        Assert.assertEquals(expectedList.size(),actualList.size());
+        Assert.assertTrue(expectedList.containsAll(actualList));
+        Mockito.verify(goodsRepository, Mockito.times(1)).findAll();
+        GOODS_LIST.get(0).setCount(oldCount);
+    }
+
+    @Test
+    public void shouldReturnAllListOfGoodsWithInRangeOfCostGoodsFilter() {
+        double lowCost = 0d;
+        double highCost = 250d;
+        Mockito.when(goodsRepository.findAll()).thenReturn(GOODS_LIST);
+        List<Goods> expectedList = GOODS_LIST.stream()
+                .filter(g->g.getCost()>lowCost && g.getCost()<highCost)
+                .collect(Collectors.toList());
+
+        List<Goods> actualList =
+                goodsService.findAll(Arrays.asList(new InRangeOfCostGoodsFilterImpl(true, lowCost, highCost)));
+
+        Assert.assertEquals(expectedList.size(),actualList.size());
+        Assert.assertTrue(expectedList.containsAll(actualList));
         Mockito.verify(goodsRepository, Mockito.times(1)).findAll();
     }
 
     @Test
-    public void shouldReturnAllListOfGoodsWhenFilterList_IsNotEmpty() {
-        List<GoodsFilter> goodsFilterList = Arrays.asList(new InRangeOfCostGoodsFilterImpl(true, 200.22, 2000.22));
+    public void shouldReturnAllListOfGoodsWithNameLikeGoodsFilter() {
+        String nameLike = "ir";
         Mockito.when(goodsRepository.findAll()).thenReturn(GOODS_LIST);
+        List<Goods> expectedList = GOODS_LIST.stream()
+                .filter(g->g.getName().contains(nameLike))
+                .collect(Collectors.toList());
 
-        goodsService.findAll(goodsFilterList);
+        List<Goods> actualList =
+                goodsService.findAll(Arrays.asList(new NameLikeGoodsFilterImpl(true, nameLike)));
 
+        Assert.assertEquals(expectedList.size(),actualList.size());
+        Assert.assertTrue(expectedList.containsAll(actualList));
+        Mockito.verify(goodsRepository, Mockito.times(1)).findAll();
+    }
+
+    @Test
+    public void shouldReturnAllListOfGoodsWithDescriptionLikeGoodsFilter() {
+        String descriptionLike = "ir";
+        Mockito.when(goodsRepository.findAll()).thenReturn(GOODS_LIST);
+        List<Goods> expectedList = GOODS_LIST.stream()
+                .filter(g->g.getDescription().contains(descriptionLike))
+                .collect(Collectors.toList());
+
+        List<Goods> actualList =
+                goodsService.findAll(Arrays.asList(new DescriptionLikeGoodsFilterImpl(true, descriptionLike)));
+
+        Assert.assertEquals(expectedList.size(),actualList.size());
+        Assert.assertTrue(expectedList.containsAll(actualList));
         Mockito.verify(goodsRepository, Mockito.times(1)).findAll();
     }
 
@@ -60,58 +116,12 @@ public class GoodsServiceTest {
         goodsCategory = new GoodsCategory();
         Mockito.when(goodsRepository.findAllByGoodsCategory(goodsCategory)).thenReturn(GOODS_LIST);
 
-        goodsService.findAllByGoodsCategory(goodsCategory, new ArrayList<>());
+        List<Goods> actualList = goodsService.findAllByGoodsCategory(goodsCategory, new ArrayList<>());
 
         Mockito.verify(goodsRepository, Mockito.times(1)).findAllByGoodsCategory(goodsCategory);
-    }
+        Assert.assertEquals(GOODS_LIST.size(),actualList.size());
+        Assert.assertTrue(GOODS_LIST.containsAll(actualList));
 
-    @Test
-    public void shouldReturnListOfGoodsByCategoryWhenFilterList_IsNotEmpty() {
-        goodsCategory = new GoodsCategory();
-        List<GoodsFilter> goodsFilterList = Arrays.asList(new InRangeOfCostGoodsFilterImpl(true, 200.22, 2000.22));
-        Mockito.when(goodsRepository.findAllByGoodsCategory(goodsCategory)).thenReturn(GOODS_LIST);
-
-        goodsService.findAllByGoodsCategory(goodsCategory, goodsFilterList);
-
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByGoodsCategory(goodsCategory);
-    }
-
-    @Test
-    public void shouldReturnListOfGoodsByNameLikeWhenFilterList_IsEmpty() {
-        Mockito.when(goodsRepository.findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING)).thenReturn(GOODS_LIST);
-
-        goodsService.findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING, new ArrayList<>());
-
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING);
-    }
-
-    @Test
-    public void shouldReturnListOfGoodsByNameLikeWhenFilterList_IsNotEmpty() {
-        List<GoodsFilter> goodsFilterList = Arrays.asList(new InRangeOfCostGoodsFilterImpl(true, 200.22, 2000.22));
-        Mockito.when(goodsRepository.findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING)).thenReturn(GOODS_LIST);
-
-        goodsService.findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING, goodsFilterList);
-
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING);
-    }
-
-    @Test
-    public void shouldReturnListOfGoodsByDescriptionLikeWhenFilterList_IsEmpty() {
-        Mockito.when(goodsRepository.findAllByNameLike(TestFieldsUtil.EXAMPLE_STRING)).thenReturn(GOODS_LIST);
-
-        goodsService.findAllByDescriptionLike(TestFieldsUtil.EXAMPLE_STRING, new ArrayList<>());
-
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByDescriptionLike(TestFieldsUtil.EXAMPLE_STRING);
-    }
-
-    @Test
-    public void shouldReturnListOfGoodsByDescriptionLikeWhenFilterList_IsNotEmpty() {
-        List<GoodsFilter> goodsFilterList = Arrays.asList(new InRangeOfCostGoodsFilterImpl(true, 200.22, 2000.22));
-        Mockito.when(goodsRepository.findAllByDescriptionLike(TestFieldsUtil.EXAMPLE_STRING)).thenReturn(GOODS_LIST);
-
-        goodsService.findAllByDescriptionLike(TestFieldsUtil.EXAMPLE_STRING, goodsFilterList);
-
-        Mockito.verify(goodsRepository, Mockito.times(1)).findAllByDescriptionLike(TestFieldsUtil.EXAMPLE_STRING);
     }
 
     @Test(expected = NotFoundException.class)
