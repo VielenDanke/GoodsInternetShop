@@ -9,8 +9,8 @@ import kz.epam.InternetShop.payload.LoginRequest;
 import kz.epam.InternetShop.payload.SignUpRequest;
 import kz.epam.InternetShop.security.TokenProvider;
 import kz.epam.InternetShop.service.interfaces.UserService;
-import kz.epam.InternetShop.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,15 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;
-
-import static kz.epam.InternetShop.util.ConstantUtil.AUTHORIZATION_COOKIE_EXPIRE_SECONDS;
-import static kz.epam.InternetShop.util.ConstantUtil.AUTHORIZATION_USER_TOKEN;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,9 +37,8 @@ public class AuthController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
-                                              HttpServletResponse response) {
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -55,8 +49,7 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.createToken(authentication);
-        // Saving token in cookie for validation in @CookieValidatorFilter
-        CookieUtil.addCookie(response, AUTHORIZATION_USER_TOKEN, token, AUTHORIZATION_COOKIE_EXPIRE_SECONDS);
+
         return ResponseEntity.ok(new AuthResponse(token));
     }
 

@@ -83,11 +83,11 @@ create table authorities
 );
 
 -- users --
-INSERT INTO users (USERNAME)
-VALUES ('Admin');                                                             -- 100 000
+INSERT INTO users (USERNAME, PASSWORD)
+VALUES ('Admin@mail.ru','Admin');                                                             -- 100 000
 
-INSERT INTO users (USERNAME)
-VALUES ('User');                                                              -- 100 001
+INSERT INTO users (USERNAME, PASSWORD)
+VALUES ('User@mail.ru', 'User');                                                              -- 100 001
 
 -- authorities --
 INSERT INTO authorities (USER_ID, AUTHORITY)

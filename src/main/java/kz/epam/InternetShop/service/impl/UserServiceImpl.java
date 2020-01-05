@@ -3,7 +3,6 @@ package kz.epam.InternetShop.service.impl;
 import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.repository.UserRepository;
 import kz.epam.InternetShop.service.interfaces.UserService;
-import kz.epam.InternetShop.util.ValidationUtil;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,7 +37,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String userPasswordAfterEncoding = passwordEncoder.encode(user.getPassword());
+        user.setPassword(userPasswordAfterEncoding);
         return userRepository.save(user);
     }
 

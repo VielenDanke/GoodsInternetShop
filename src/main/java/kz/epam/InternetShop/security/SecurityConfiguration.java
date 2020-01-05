@@ -103,13 +103,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return tokenAuthenticationFilter;
     }
 
-    @Bean
-    public CookieValidatorFilter cookieValidatorFilter() {
-        CookieValidatorFilter cookieValidatorFilter = new CookieValidatorFilter();
-        cookieValidatorFilter.setTokenProvider(tokenProvider);
-        return cookieValidatorFilter;
-    }
-
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

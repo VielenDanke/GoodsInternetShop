@@ -1,5 +1,6 @@
 package kz.epam.InternetShop.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -42,6 +43,7 @@ public class Goods {
     private List<String> photos = new ArrayList<>();
 
     @OneToMany(mappedBy = "goods", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<OrderDetails> orderDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)

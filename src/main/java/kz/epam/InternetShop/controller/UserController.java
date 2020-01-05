@@ -8,19 +8,11 @@ import kz.epam.InternetShop.service.annotation.IsAdmin;
 import kz.epam.InternetShop.service.annotation.IsApprovedPerson;
 import kz.epam.InternetShop.service.annotation.IsUser;
 import kz.epam.InternetShop.service.interfaces.UserService;
-import kz.epam.InternetShop.util.ControllerUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/shop/user")
