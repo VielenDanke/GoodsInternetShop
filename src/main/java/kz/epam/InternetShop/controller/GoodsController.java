@@ -63,20 +63,19 @@ public class GoodsController {
     @DeleteMapping(value = "/{goodsId}")
     public ResponseEntity delete(@PathVariable("goodsId") long goodsId) {
         goodsService.delete(Goods.builder().id(goodsId).build());
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping(value = "/{goodsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(@Valid @RequestBody Goods goods, @PathVariable("goodsId") long goodsId) {
         goods.setId(goodsId);
         goodsService.save(goods);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Goods create(@Valid @RequestBody Goods goods) {
         goods.setId(null);
-        goodsService.save(goods);
-        return goods;
+        return goodsService.save(goods);
     }
 }

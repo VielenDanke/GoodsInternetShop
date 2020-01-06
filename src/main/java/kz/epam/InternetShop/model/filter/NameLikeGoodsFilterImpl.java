@@ -23,4 +23,22 @@ public class NameLikeGoodsFilterImpl extends GoodsFilter{
         super(active);
         this.nameLike = nameLike;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        NameLikeGoodsFilterImpl that = (NameLikeGoodsFilterImpl) o;
+
+        return nameLike != null ? nameLike.equals(that.nameLike) : that.nameLike == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (nameLike != null ? nameLike.hashCode() : 0);
+        return result;
+    }
 }

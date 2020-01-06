@@ -18,4 +18,6 @@ public class AccessibleGoodsFilterImpl extends GoodsFilter{
     public AccessibleGoodsFilterImpl(@JsonProperty("active") boolean active) {
         super(active);
     }
+
+
 }

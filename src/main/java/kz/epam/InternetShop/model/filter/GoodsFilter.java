@@ -16,4 +16,19 @@ public abstract class GoodsFilter {
     };
 
     public abstract List<Goods> apply(List<Goods> goodsList);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GoodsFilter that = (GoodsFilter) o;
+
+        return active == that.active;
+    }
+
+    @Override
+    public int hashCode() {
+        return (active ? 1 : 0);
+    }
 }
