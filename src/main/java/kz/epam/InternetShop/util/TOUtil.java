@@ -13,20 +13,45 @@ import kz.epam.InternetShop.model.filter.GoodsFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TOUtil {
     public static OrderDetailsTO asTO(OrderDetails orderDetails) {
         Goods goods = orderDetails.getGoods();
+        Order order = orderDetails.getOrder();
+        List<String> photos = goods.getPhotos();
         return OrderDetailsTO.builder()
                 .id(orderDetails.getId())
-                .goodsId(goods.getId())
-                .goodsName(goods.getName())
+                .goodsId(goods==null ? null : goods.getId())
+                .goodsName(goods==null ? null : goods.getName())
                 .cost(orderDetails.getCost())
                 .count(orderDetails.getCount())
-                .goodsPhoto(goods.getPhotos().isEmpty() ? "" : goods.getPhotos().get(0))
-                .orderId(orderDetails.getOrder().getId())
+                .goodsPhoto(photos==null || photos.isEmpty() ? "" : goods.getPhotos().get(0))
+                .orderId(order==null ? null : order.getId())
                 .available(orderDetails.isAvailable())
                 .build();
+    }
+    public static OrderDetails createFrom(OrderDetailsTO orderDetailsTO) {
+        Long goodsId = orderDetailsTO.getGoodsId();
+        Goods goods = (goodsId==null)
+                ? null
+                : Goods.builder().id(goodsId).build();
+        Long orderId = orderDetailsTO.getOrderId();
+        Order order = (orderId==null)
+                ? null
+                : Order.builder().id(orderId).build();
+        return OrderDetails.builder()
+                .id(orderDetailsTO.getId())
+                .goods(goods)
+                .cost(orderDetailsTO.getCost())
+                .count(orderDetailsTO.getCount())
+                .order(order)
+                .available(orderDetailsTO.isAvailable())
+                .build();
+    }
+
+    public static List<OrderDetails> createListFrom(List<OrderDetailsTO> orderDetailsTO) {
+        return orderDetailsTO.stream().map(odTO->createFrom(odTO)).collect(Collectors.toList());
     }
 
     public static GoodsTO asTO(Goods goods) {

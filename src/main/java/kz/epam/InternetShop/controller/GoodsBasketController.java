@@ -4,7 +4,11 @@ import kz.epam.InternetShop.model.Order;
 import kz.epam.InternetShop.model.OrderDetails;
 import kz.epam.InternetShop.model.TO.OrderDetailsTO;
 import kz.epam.InternetShop.model.User;
+import kz.epam.InternetShop.security.UserPrincipal;
+import kz.epam.InternetShop.service.annotation.CurrentUser;
+import kz.epam.InternetShop.service.annotation.IsUser;
 import kz.epam.InternetShop.service.interfaces.GoodsBasketService;
+import kz.epam.InternetShop.service.interfaces.UserService;
 import kz.epam.InternetShop.util.exception.NotAvailableGoodsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,75 +20,74 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kz.epam.InternetShop.util.TOUtil.asTO;
+import static kz.epam.InternetShop.util.TOUtil.*;
 
 @RestController
 @RequestMapping(value = "/goods", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GoodsBasketController {
 
     private final GoodsBasketService basketService;
+    private UserService userService;
 
     @Autowired
-    public GoodsBasketController(GoodsBasketService basketService) {
+    public GoodsBasketController(GoodsBasketService basketService, UserService userService) {
         this.basketService = basketService;
+        this.userService = userService;
     }
 
-    @GetMapping("/basket/{userId}")
-    public List<OrderDetailsTO> getBasketGoods(@PathVariable("userId") long userId) {
-        User user = User.builder().id(userId).build();
-        Order basket = basketService.getBasket(user);
-        List<OrderDetailsTO> list = basketService.getAllOrderDetails(user)
-                .stream()
-                .map(od -> asTO(od))
-                .collect(Collectors.toList());
-
+    @IsUser
+    @GetMapping("/basket")
+    public List<OrderDetailsTO> getBasketGoods(@CurrentUser UserPrincipal userPrincipal) {
+        User user = userService.findById(userPrincipal.getId());
         return basketService.getAllOrderDetails(user)
                 .stream()
                 .map(od -> asTO(od))
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/basket/{userId}/clear")
-    public ResponseEntity<String> clearBasket(@PathVariable("userId") long userId) {
-        User user = User.builder().id(userId).build();
+    @IsUser
+    @GetMapping("/basket/clear")
+    public ResponseEntity<String> clearBasket(@CurrentUser UserPrincipal userPrincipal) {
+        User user = userService.findById(userPrincipal.getId());
         basketService.clear(user);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/basket/{userId}/order")
-    public ResponseEntity<String> placeOrder(@PathVariable("userId") long userId) throws NotAvailableGoodsException {
-        User user = User.builder().id(userId).build();
+    @IsUser
+    @GetMapping("/basket/order")
+    public ResponseEntity<String> placeOrder(@CurrentUser UserPrincipal userPrincipal) throws NotAvailableGoodsException {
+        User user = userService.findById(userPrincipal.getId());
         basketService.setStatusToOne(user);     // throws NotAccessibleGoodsException
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 
-    @PostMapping(value = "/{userId}/toBasket", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> createOrderDetailsInBasket(@Valid @RequestBody OrderDetails orderDetails,
-                                                             @PathVariable("userId") long userId) {
-        User user = User.builder().id(userId).build();
-        basketService.createOrderDetailsInBasket(orderDetails, user);
-        return new ResponseEntity(HttpStatus.OK);
+    @IsUser
+    @PostMapping(value = "/toBasket", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> createOrderDetailsInBasket(@Valid @RequestBody OrderDetailsTO orderDetailsTO,
+                                                             @CurrentUser UserPrincipal userPrincipal) {
+        User user = userService.findById(userPrincipal.getId());
+        basketService.createOrderDetailsInBasket(createFrom(orderDetailsTO), user);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/basket/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @IsUser
+    @PutMapping(value = "/basket", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateCountOrderDetailsInBasket(
-            @Valid @RequestBody List<OrderDetails> orderDetailsList,
-            @PathVariable("userId") long userId
+            @Valid @RequestBody List<OrderDetailsTO> orderDetailsTOList,
+            @CurrentUser UserPrincipal userPrincipal
     ) {
-        User user = User.builder().id(userId).build();
-        basketService.updateCountOrderDetailsInBasket(orderDetailsList, user);
+        User user = userService.findById(userPrincipal.getId());
+        basketService.updateCountOrderDetailsInBasket(createListFrom(orderDetailsTOList), user);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/basket/{userId}/{orderDetailsId}")
+    @IsUser
+    @DeleteMapping(value = "/basket/{orderDetailsId}")
     public ResponseEntity<String> removeFromBasket( @PathVariable("orderDetailsId") long orderDetailsId,
-                                                    @PathVariable("userId") long userId) {
-        User user = User.builder().id(userId).build();
+                                                    @CurrentUser UserPrincipal userPrincipal) {
+        User user = userService.findById(userPrincipal.getId());
         OrderDetails orderDetails = OrderDetails.builder().id(orderDetailsId).build();
         basketService.removeFromBasket(orderDetails, user);
         return new ResponseEntity(HttpStatus.OK);
     }
-
-
-
 }

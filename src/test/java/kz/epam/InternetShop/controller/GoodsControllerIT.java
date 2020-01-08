@@ -151,7 +151,7 @@ class GoodsControllerIT {
     }
 
     @Test
-    @WithUserDetails(CLIENT_USERNAME)
+    @WithUserDetails(ADMIN_USERNAME)
     void delete() throws Exception {
         Long goodsId = 100099L;
         String url = "/goods/" + goodsId.toString();
@@ -165,7 +165,7 @@ class GoodsControllerIT {
     }
 
     @Test
-    @WithUserDetails(CLIENT_USERNAME)
+    @WithUserDetails(ADMIN_USERNAME)
     void update() throws Exception {
         Long goodsId = 100099L;
         String url = "/goods/" + goodsId.toString();
@@ -184,7 +184,7 @@ class GoodsControllerIT {
     }
 
     @Test
-    @WithUserDetails(CLIENT_USERNAME)
+    @WithUserDetails(ADMIN_USERNAME)
     void create() throws Exception {
         Long goodsId = 100099L;
         String url = "/goods/";

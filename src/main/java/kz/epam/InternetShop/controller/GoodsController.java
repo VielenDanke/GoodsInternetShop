@@ -5,6 +5,7 @@ import kz.epam.InternetShop.model.GoodsCategory;
 import kz.epam.InternetShop.model.TO.GoodsCategoryTO;
 import kz.epam.InternetShop.model.TO.GoodsFiltersTO;
 import kz.epam.InternetShop.model.TO.GoodsTO;
+import kz.epam.InternetShop.service.annotation.IsAdmin;
 import kz.epam.InternetShop.service.interfaces.GoodsCategoryService;
 import kz.epam.InternetShop.service.interfaces.GoodsService;
 import kz.epam.InternetShop.util.TOUtil;
@@ -60,12 +61,14 @@ public class GoodsController {
                 .collect(Collectors.toList());
     }
 
+    @IsAdmin
     @DeleteMapping(value = "/{goodsId}")
     public ResponseEntity delete(@PathVariable("goodsId") long goodsId) {
         goodsService.delete(Goods.builder().id(goodsId).build());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @IsAdmin
     @PutMapping(value = "/{goodsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(@Valid @RequestBody Goods goods, @PathVariable("goodsId") long goodsId) {
         goods.setId(goodsId);
@@ -73,6 +76,7 @@ public class GoodsController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @IsAdmin
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Goods create(@Valid @RequestBody Goods goods) {
         goods.setId(null);
