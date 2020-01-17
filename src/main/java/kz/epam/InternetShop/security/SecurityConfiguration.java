@@ -75,7 +75,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/**/*.jpg",
                         "/**/*.html",
                         "/**/*.css",
-                        "/**/*.js")
+                        "/**/*.js",
+                        "/**/categories",
+                        "/**/categories/*")
                 .permitAll()
                 .antMatchers(AUTH_MATCHER, OAUTH2_MATCHER)
                 .permitAll()

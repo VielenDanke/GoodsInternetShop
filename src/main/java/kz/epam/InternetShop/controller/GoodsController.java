@@ -5,6 +5,7 @@ import kz.epam.InternetShop.model.GoodsCategory;
 import kz.epam.InternetShop.model.TO.GoodsCategoryTO;
 import kz.epam.InternetShop.model.TO.GoodsFiltersTO;
 import kz.epam.InternetShop.model.TO.GoodsTO;
+import kz.epam.InternetShop.model.filter.GoodsFilter;
 import kz.epam.InternetShop.service.annotation.IsAdmin;
 import kz.epam.InternetShop.service.interfaces.GoodsCategoryService;
 import kz.epam.InternetShop.service.interfaces.GoodsService;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,18 @@ public class GoodsController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/categories/{categoryId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/categories/{categoryId}")
+    List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId) {
+        List<GoodsFilter> filters = Collections.emptyList();
+        GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
+        return goodsService.findAllByGoodsCategory(goodsCategory, filters)
+                .stream()
+                .map(TOUtil::asTO)
+                .collect(Collectors.toList());
+    }
+
+
+    @GetMapping(value = "/categories/{categoryId}/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
     List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId,
                                          @Valid @RequestBody GoodsFiltersTO goodsFiltersTO) {
         GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
