@@ -53,7 +53,7 @@ public class GoodsController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/categories/{categoryId}")
+    @PostMapping(value = "/categories/{categoryId}")
     List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId) {
         List<GoodsFilter> filters = Collections.emptyList();
         GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
