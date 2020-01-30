@@ -53,7 +53,7 @@ public class GoodsController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/categories/{categoryId}")
+    @GetMapping(value = "/categories/{categoryId}")
     List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId) {
         List<GoodsFilter> filters = Collections.emptyList();
         GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
@@ -64,7 +64,7 @@ public class GoodsController {
     }
 
 
-    @GetMapping(value = "/categories/{categoryId}/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/categories/{categoryId}/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
     List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId,
                                          @Valid @RequestBody GoodsFiltersTO goodsFiltersTO) {
         GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
