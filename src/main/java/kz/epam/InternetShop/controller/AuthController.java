@@ -42,7 +42,7 @@ public class AuthController {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    loginRequest.getUsername(),
+                    loginRequest.getEmail(),
                     loginRequest.getPassword()
                 )
         );
@@ -55,16 +55,16 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        Optional<User> userFromDB = userService.findByUsername(signUpRequest.getUsername());
+        Optional<User> userFromDB = userService.findByUsername(signUpRequest.getEmail());
 
         if (userFromDB.isPresent()) {
             throw new BadCredentialsException("Username is already exists");
         }
 
         User user = new User();
-        user.setUsername(signUpRequest.getUsername());
+        user.setUsername(signUpRequest.getEmail());
         user.setPassword(signUpRequest.getPassword());
-        user.setFullName(signUpRequest.getFullName());
+        user.setFullName(signUpRequest.getName());
         user.setAddress(signUpRequest.getAddress());
         user.setProvider(AuthProvider.LOCAL);
         user.setEnabled(1);
