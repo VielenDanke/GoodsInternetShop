@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static kz.epam.InternetShop.util.TOUtil.asList;
+import static kz.epam.InternetShop.util.TOUtil.asTO;
 
 @RestController
 @RequestMapping(value = "/goods", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,7 +75,13 @@ public class GoodsController {
                 .collect(Collectors.toList());
     }
 
-    @IsAdmin
+    @GetMapping(value = "/{goodsId}")
+    public GoodsTO get(@PathVariable("goodsId") long goodsId) {
+        goodsService.get(goodsId);
+        return asTO(goodsService.get(goodsId));
+    }
+
+//    @IsAdmin
     @DeleteMapping(value = "/{goodsId}")
     public ResponseEntity delete(@PathVariable("goodsId") long goodsId) {
         goodsService.delete(Goods.builder().id(goodsId).build());

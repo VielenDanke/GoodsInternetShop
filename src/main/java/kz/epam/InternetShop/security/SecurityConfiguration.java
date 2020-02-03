@@ -78,7 +78,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/**/*.js",
                         "/**/categories",
                         "/**/categories/*",
-                        "/**/categories/*/filter")
+                        "/**/categories/*/filter",
+                        "/**/goods/*")
                 .permitAll()
                 .antMatchers(AUTH_MATCHER, OAUTH2_MATCHER)
                 .permitAll()

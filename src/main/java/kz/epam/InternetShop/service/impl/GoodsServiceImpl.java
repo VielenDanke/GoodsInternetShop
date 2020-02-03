@@ -55,6 +55,13 @@ public class GoodsServiceImpl implements GoodsService {
         repository.delete(goods);
     }
 
+    @Override
+    public Goods get(long goodsId) {
+        Goods goods =  repository.findById(goodsId).orElse(null);
+        ValidationUtil.checkNotFound(goods!=null, "Item not found");
+        return goods;
+    }
+
     private void checkNotFound(Goods goods) throws NotFoundException {
         Long goodsId = goods.getId();
         if (goodsId!=null) {
