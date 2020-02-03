@@ -12,4 +12,6 @@ public interface GoodsService extends CRUDInterface<Goods> {
 
     List<Goods> findAllByGoodsCategory(GoodsCategory goodsCategory, List<GoodsFilter> filters);
 
+    Goods get(long goodsId);
+
 }
