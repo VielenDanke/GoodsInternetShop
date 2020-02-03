@@ -1,6 +1,5 @@
 package kz.epam.InternetShop.security;
 
-import kz.epam.InternetShop.repository.UserRepository;
 import kz.epam.InternetShop.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import kz.epam.InternetShop.security.oauth2.OAuth2AuthenticationFailureHandler;
 import kz.epam.InternetShop.security.oauth2.OAuth2AuthenticationSuccessHandler;
@@ -36,7 +35,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-    private final UserRepository userRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

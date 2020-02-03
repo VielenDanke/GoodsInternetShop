@@ -33,7 +33,7 @@ public class AuthControllerIT {
     @Test
     public void shouldSaveUserToDatabase() throws Exception {
         String url = "/auth/signup";
-        String jsonContent = "{\"username\":\"newuser@mail.ru\", \"password\":\"test\", \"fullName\":\"username\", \"address\":\"address\"}";
+        String jsonContent = "{\"email\":\"newuser@mail.ru\", \"password\":\"test\", \"name\":\"username\", \"address\":\"address\"}";
 
         this.mockMvc.perform(post(url)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -46,7 +46,7 @@ public class AuthControllerIT {
     @Test
     public void shouldLoginUserWithCorrectCredentials() throws Exception {
         String url = "/auth/login";
-        String jsonContent = "{\"username\":\"newuser@mail.ru\",\"password\":\"test\"}";
+        String jsonContent = "{\"email\":\"newuser@mail.ru\",\"password\":\"test\"}";
 
         this.mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
