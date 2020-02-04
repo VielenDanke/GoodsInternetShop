@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/shop/user")
+@RequestMapping("/user")
 @IsApprovedPerson
 public class UserController {
 

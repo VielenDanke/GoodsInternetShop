@@ -81,7 +81,7 @@ public class GoodsController {
         return asTO(goodsService.get(goodsId));
     }
 
-//    @IsAdmin
+    @IsAdmin
     @DeleteMapping(value = "/{goodsId}")
     public ResponseEntity delete(@PathVariable("goodsId") long goodsId) {
         goodsService.delete(Goods.builder().id(goodsId).build());

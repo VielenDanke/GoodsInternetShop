@@ -134,12 +134,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         user.setLocale(oAuthUser.getLocale());
         user.setGender(oAuthUser.getGender());
         user.setPassword(UUID.randomUUID().toString());
+        user.setPicture(oAuthUser.getImageUrl());
         return userRepository.save(user);
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2User) {
         existingUser.setFullName(oAuth2User.getName());
         existingUser.setLocale(oAuth2User.getLocale());
+        existingUser.setPicture(oAuth2User.getImageUrl());
         return userRepository.save(existingUser);
     }
 }

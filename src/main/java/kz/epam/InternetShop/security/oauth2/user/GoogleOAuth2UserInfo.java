@@ -30,7 +30,13 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
         return (String) attributes.get(PROVIDER_GENDER);
     }
 
+    @Override
     public String getLocale() {
         return (String) attributes.get(PROVIDER_LOCALE);
+    }
+
+    @Override
+    public String getImageUrl() {
+        return (String) attributes.get(PROVIDER_PICTURE);
     }
 }

@@ -23,4 +23,6 @@ public abstract class OAuth2UserInfo {
     public abstract String getGender();
 
     public abstract String getLocale();
+
+    public abstract String getImageUrl();
 }

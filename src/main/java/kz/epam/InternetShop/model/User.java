@@ -50,6 +50,8 @@ public class User {
     private AuthProvider provider;
     @Column(name = "PROVIDER_ID")
     private String providerId;
+    @Column(name = "PICTURE")
+    private String picture;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID"))

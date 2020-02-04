@@ -24,6 +24,7 @@ create table users
     ENABLED         NUMBER(1) DEFAULT 1 NOT NULL check (ENABLED in (0, 1)),
     AUTH_PROVIDER   VARCHAR2(256),
     PROVIDER_ID     VARCHAR2(256),
+    PICTURE         VARCHAR2(512),
     CONSTRAINT users_pk PRIMARY KEY (ID)
 );
 

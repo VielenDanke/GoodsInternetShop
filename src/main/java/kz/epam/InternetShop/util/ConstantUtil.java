@@ -11,6 +11,7 @@ public class ConstantUtil {
     public static final String PROVIDER_EMAIL = "email";
     public static final String PROVIDER_GENDER = "gender";
     public static final String PROVIDER_LOCALE = "locale";
+    public static final String PROVIDER_PICTURE = "picture";
     public static final String ERROR = "error";
     public static final String SINGLE_SLASH = "/";
     public static final String TOKEN = "token";
