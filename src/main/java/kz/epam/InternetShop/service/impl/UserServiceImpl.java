@@ -5,6 +5,9 @@ import kz.epam.InternetShop.repository.UserRepository;
 import kz.epam.InternetShop.service.interfaces.UserService;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +21,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public void deleteAll() {
-        userRepository.deleteAll();
-    }
-
-    @Override
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
-    }
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder) {
@@ -36,6 +29,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "user")
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+    @Override
+    @Cacheable(value = "user")
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    @Override
+    @CachePut(value = "user", key = "#user.id")
     public User save(User user) {
         String userPasswordAfterEncoding = passwordEncoder.encode(user.getPassword());
         user.setPassword(userPasswordAfterEncoding);
@@ -43,31 +49,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "user")
     public void delete(User user) {
         userRepository.delete(user);
     }
 
     @Override
+    @Cacheable(value = "user")
     public List<User> findByUsernameLike(String usernameLike) {
         return userRepository.findByUsernameLike(wrapWithWildcard(usernameLike));
     }
 
     @Override
+    @Cacheable(value = "user")
     public List<User> findByAddressLike(String addressLike) {
         return userRepository.findByAddressLike(wrapWithWildcard(addressLike));
     }
 
     @Override
+    @Cacheable(value = "user")
     public List<User> findByFullNameLike(String fullNameLike) {
         return userRepository.findByFullNameLike(wrapWithWildcard(fullNameLike));
     }
 
     @Override
+    @Cacheable(value = "user")
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
     @Override
+    @CacheEvict(value = "user")
     public void deleteByUsername(String username) {
         userRepository.deleteByUsername(username);
     }

@@ -4,6 +4,7 @@ import kz.epam.InternetShop.model.GoodsCategory;
 import kz.epam.InternetShop.repository.GoodsCategoryRepository;
 import kz.epam.InternetShop.service.interfaces.GoodsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     }
 
     @Override
+    @Cacheable(value = "goodsCategory")
     public List<GoodsCategory> getAll() {
         return repository.findAll();
     }

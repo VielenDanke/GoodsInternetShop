@@ -8,6 +8,9 @@ import kz.epam.InternetShop.service.interfaces.GoodsService;
 import kz.epam.InternetShop.util.ValidationUtil;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +25,13 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    @Cacheable(value = "goods")
     public List<Goods> findAll(List<GoodsFilter> filters) {
         return applyFilters(repository.findAll(), filters);
     }
 
     @Override
+    @Cacheable(value = "goods")
     public List<Goods> findAllByGoodsCategory(GoodsCategory goodsCategory, List<GoodsFilter> filters) {
         return applyFilters(repository.findAllByGoodsCategory(goodsCategory), filters);
     }
@@ -42,6 +47,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    @CachePut(value = "goods", key = "#goods.id")
     public Goods save(Goods goods) throws NotFoundException {
         if (goods.getId()!=null) {
             checkNotFound(goods);
@@ -50,12 +56,14 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    @CacheEvict(value = "goods")
     public void delete(Goods goods) throws NotFoundException {
         checkNotFound(goods);
         repository.delete(goods);
     }
 
     @Override
+    @Cacheable(value = "goods")
     public Goods get(long goodsId) {
         Goods goods =  repository.findById(goodsId).orElse(null);
         ValidationUtil.checkNotFound(goods!=null, "Item not found");
