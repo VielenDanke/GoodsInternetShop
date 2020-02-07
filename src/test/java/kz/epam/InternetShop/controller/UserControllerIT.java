@@ -1,6 +1,7 @@
 package kz.epam.InternetShop.controller;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class UserControllerIT {
 
     @Test
     public void shouldBeForbiddenForUnauthorizedPerson_WhenGettingAllUsers() throws Exception {
-        String url = "/shop/user/all";
+        String url = "/user/all";
 
         this.mockMvc.perform(get(url))
                 .andDo(print())
@@ -46,7 +47,7 @@ public class UserControllerIT {
 
     @Test
     public void shouldBeForbiddenForUnauthorizedPerson_WhenSearchingUserById() throws Exception {
-        String url = "/shop/user/100001";
+        String url = "/user/100001";
 
         this.mockMvc.perform(get(url))
                 .andDo(print())
@@ -55,7 +56,7 @@ public class UserControllerIT {
 
     @Test
     public void shouldBeForbiddenForUnauthorizedPerson_WhenDeletingUserById() throws Exception {
-        String url = "/shop/user/100001";
+        String url = "/user/100001";
 
         this.mockMvc.perform(delete(url))
                 .andDo(print())
@@ -64,7 +65,7 @@ public class UserControllerIT {
 
     @Test
     public void shouldBeForbiddenFroUnauthorizedPerson_WhenUpdatingPerson() throws Exception {
-        String url = "/shop/user/update";
+        String url = "/user/update";
 
         this.mockMvc.perform(put(url))
                 .andDo(print())
@@ -73,7 +74,7 @@ public class UserControllerIT {
 
     @Test
     public void shouldBeForbiddenFroUnauthorizedPerson_WhenGettingUserFromUserPrincipal() throws Exception {
-        String url = "/shop/user/me";
+        String url = "/user/me";
 
         this.mockMvc.perform(get(url))
                 .andDo(print())
@@ -83,7 +84,7 @@ public class UserControllerIT {
     @Test
     @WithUserDetails(ADMIN_USERNAME)
     public void shouldGetAllUsersFromDatabase() throws Exception {
-        String url = "/shop/user/all";
+        String url = "/user/all";
 
         this.mockMvc.perform(get(url))
                 .andDo(print())
@@ -94,7 +95,7 @@ public class UserControllerIT {
     @Test
     @WithUserDetails(ADMIN_USERNAME)
     public void shouldGetUserById_WhenSearchingUserById() throws Exception {
-        String url = "/shop/user/100001";
+        String url = "/user/100001";
 
         this.mockMvc.perform(get(url))
                 .andDo(print())
@@ -105,7 +106,7 @@ public class UserControllerIT {
     @Test
     @WithUserDetails(ADMIN_USERNAME)
     public void shouldDeleteUserById() throws Exception {
-        String url = "/shop/user/100001";
+        String url = "/user/100001";
         String successfulMessage = "User deleted successfully";
 
         this.mockMvc.perform(delete(url))
@@ -118,7 +119,7 @@ public class UserControllerIT {
     @Test
     @WithUserDetails(CLIENT_USERNAME)
     public void shouldUpdateUserByUserPrincipal() throws Exception {
-        String url = "/shop/user/update";
+        String url = "/user/update";
         String jsonContent = "{\"fullName\":\"fullName\", \"address\":\"address\"}";
 
         this.mockMvc.perform(put(url)
@@ -132,7 +133,7 @@ public class UserControllerIT {
     @Test
     @WithUserDetails(CLIENT_USERNAME)
     public void shouldReturnUserByUserPrincipal() throws Exception {
-        String url = "/shop/user/me";
+        String url = "/user/me";
 
         this.mockMvc.perform(get(url))
                 .andDo(print())

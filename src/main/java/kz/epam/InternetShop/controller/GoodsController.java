@@ -1,5 +1,7 @@
 package kz.epam.InternetShop.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import kz.epam.InternetShop.model.Goods;
 import kz.epam.InternetShop.model.GoodsCategory;
 import kz.epam.InternetShop.model.TO.GoodsCategoryTO;
@@ -26,6 +28,7 @@ import static kz.epam.InternetShop.util.TOUtil.asTO;
 
 @RestController
 @RequestMapping(value = "/goods", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "Goods management system")
 public class GoodsController {
 
     private final GoodsCategoryService categoryService;
@@ -39,6 +42,7 @@ public class GoodsController {
     }
 
     @GetMapping("/categories")
+    @ApiOperation(value = "Return goods categories", response = List.class, httpMethod = "GET")
     List<GoodsCategoryTO> getGoodsCategories() {
         return categoryService.getAll()
                 .stream()
@@ -47,6 +51,7 @@ public class GoodsController {
     }
 
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Return all goods", response = List.class, httpMethod = "GET")
     List<GoodsTO> findAll(@Valid @RequestBody GoodsFiltersTO goodsFiltersTO) {
         return goodsService.findAll(asList(goodsFiltersTO))
                 .stream()
@@ -55,6 +60,7 @@ public class GoodsController {
     }
 
     @GetMapping(value = "/categories/{categoryId}")
+    @ApiOperation(value = "Find all goods by goods category", response = List.class, httpMethod = "GET")
     List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId) {
         List<GoodsFilter> filters = Collections.emptyList();
         GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
@@ -66,6 +72,7 @@ public class GoodsController {
 
 
     @PostMapping(value = "/categories/{categoryId}/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Find all goods by goods category with filters", response = List.class, httpMethod = "POST")
     List<GoodsTO> findAllByGoodsCategory(@PathVariable Long categoryId,
                                          @Valid @RequestBody GoodsFiltersTO goodsFiltersTO) {
         GoodsCategory goodsCategory = GoodsCategory.builder().id(categoryId).build();
@@ -76,6 +83,7 @@ public class GoodsController {
     }
 
     @GetMapping(value = "/{goodsId}")
+    @ApiOperation(value = "Find goods by ID", response = GoodsTO.class, httpMethod = "GET")
     public GoodsTO get(@PathVariable("goodsId") long goodsId) {
         goodsService.get(goodsId);
         return asTO(goodsService.get(goodsId));
@@ -83,6 +91,7 @@ public class GoodsController {
 
     @IsAdmin
     @DeleteMapping(value = "/{goodsId}")
+    @ApiOperation(value = "Delete goods by ID", response = ResponseEntity.class, httpMethod = "DELETE")
     public ResponseEntity delete(@PathVariable("goodsId") long goodsId) {
         goodsService.delete(Goods.builder().id(goodsId).build());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -90,6 +99,7 @@ public class GoodsController {
 
     @IsAdmin
     @PutMapping(value = "/{goodsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update goods by ID", response = ResponseEntity.class, httpMethod = "PUT")
     public ResponseEntity update(@Valid @RequestBody Goods goods, @PathVariable("goodsId") long goodsId) {
         goods.setId(goodsId);
         goodsService.save(goods);
@@ -98,6 +108,7 @@ public class GoodsController {
 
     @IsAdmin
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create new goods", response = Goods.class, httpMethod = "POST")
     public Goods create(@Valid @RequestBody Goods goods) {
         goods.setId(null);
         return goodsService.save(goods);

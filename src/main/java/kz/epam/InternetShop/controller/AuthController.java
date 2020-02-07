@@ -1,5 +1,7 @@
 package kz.epam.InternetShop.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import kz.epam.InternetShop.model.AuthProvider;
 import kz.epam.InternetShop.model.Role;
 import kz.epam.InternetShop.model.User;
@@ -31,12 +33,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Api(value = "Authorization and registration management")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
+    @ApiOperation(value = "Login with Details Service", response = ResponseEntity.class, httpMethod = "POST")
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -53,6 +57,7 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
+    @ApiOperation(value = "Registration with local service", response = ResponseEntity.class, httpMethod = "POST")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         Optional<User> userFromDB = userService.findByUsername(signUpRequest.getEmail());

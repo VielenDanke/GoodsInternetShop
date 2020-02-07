@@ -85,10 +85,10 @@ create table authorities
 
 -- users --
 INSERT INTO users (USERNAME, PASSWORD)
-VALUES ('Admin@mail.ru','Admin');                                                             -- 100 000
+VALUES ('Admin@mail.ru','Admin123$');                                                             -- 100 000
 
 INSERT INTO users (USERNAME, PASSWORD)
-VALUES ('User@mail.ru', 'User');                                                              -- 100 001
+VALUES ('User@mail.ru', 'User123$');                                                              -- 100 001
 
 -- authorities --
 INSERT INTO authorities (USER_ID, AUTHORITY)

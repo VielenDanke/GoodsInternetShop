@@ -69,9 +69,11 @@ public class TokenProvider {
     }
 
     public String getJwtFromRequest(HttpServletRequest request) {
+        int bearerTokenStartsFrom = 7;
+
         String bearerToken = request.getHeader(AUTHORIZATION_SECURITY_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(bearerTokenStartsFrom, bearerToken.length());
         }
         return null;
     }
