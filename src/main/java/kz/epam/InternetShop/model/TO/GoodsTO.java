@@ -18,4 +18,5 @@ public class GoodsTO {
     private Integer count;
     private String description;
     private List<String> photos;
+    private Long categoryId;
 }

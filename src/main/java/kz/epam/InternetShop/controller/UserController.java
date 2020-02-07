@@ -3,10 +3,7 @@ package kz.epam.InternetShop.controller;
 import kz.epam.InternetShop.model.User;
 import kz.epam.InternetShop.payload.UpdateRequest;
 import kz.epam.InternetShop.security.UserPrincipal;
-import kz.epam.InternetShop.service.annotation.CurrentUser;
-import kz.epam.InternetShop.service.annotation.IsAdmin;
-import kz.epam.InternetShop.service.annotation.IsApprovedPerson;
-import kz.epam.InternetShop.service.annotation.IsUser;
+import kz.epam.InternetShop.service.annotation.*;
 import kz.epam.InternetShop.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @IsUser
+    @isAuthorized
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return userService.findById(userPrincipal.getId());
     }

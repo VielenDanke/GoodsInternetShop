@@ -21,8 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kz.epam.InternetShop.util.TOUtil.asList;
-import static kz.epam.InternetShop.util.TOUtil.asTO;
+import static kz.epam.InternetShop.util.TOUtil.*;
 
 @RestController
 @RequestMapping(value = "/goods", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,7 +89,8 @@ public class GoodsController {
 
     @IsAdmin
     @PutMapping(value = "/{goodsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity update(@Valid @RequestBody Goods goods, @PathVariable("goodsId") long goodsId) {
+    public ResponseEntity update(@Valid @RequestBody GoodsTO goodsTO, @PathVariable("goodsId") long goodsId) {
+        Goods goods = createFrom(goodsTO);
         goods.setId(goodsId);
         goodsService.save(goods);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -98,8 +98,9 @@ public class GoodsController {
 
     @IsAdmin
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Goods create(@Valid @RequestBody Goods goods) {
+    public GoodsTO create(@Valid @RequestBody GoodsTO goodsTO) {
+        Goods goods = createFrom(goodsTO);
         goods.setId(null);
-        return goodsService.save(goods);
+        return asTO(goodsService.save(goods));
     }
 }
