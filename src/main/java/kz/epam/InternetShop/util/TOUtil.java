@@ -61,8 +61,21 @@ public class TOUtil {
                 .cost(goods.getCost())
                 .count(goods.getCount())
                 .description(goods.getDescription())
-                .photos(goods.getPhotos().isEmpty() ? new ArrayList<String>() : goods.getPhotos())
+                .photos(goods.getPhotos()==null || goods.getPhotos().isEmpty() ? new ArrayList<String>() : goods.getPhotos())
                 .build();
+    }
+
+    public static Goods createFrom(GoodsTO goodsTO) {
+        GoodsCategory goodsCategory = GoodsCategory.builder().id(goodsTO.getCategoryId()).build();
+        Goods goods = Goods.builder()
+                .id(goodsTO.getId())
+                .name(goodsTO.getName())
+                .cost(goodsTO.getCost())
+                .count(goodsTO.getCount())
+                .description(goodsTO.getDescription())
+                .goodsCategory(goodsCategory)                 // photo
+                .build();
+        return goods;
     }
 
     public static GoodsCategoryTO asTO(GoodsCategory goodsCategory) {
