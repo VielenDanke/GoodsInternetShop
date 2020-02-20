@@ -10,6 +10,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CachePut(value = "user", key = "#user.id")
+    @CachePut(value = "user", key = "#user.username", unless = "#result == null")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public User save(User user) {
         String userPasswordAfterEncoding = passwordEncoder.encode(user.getPassword());
         user.setPassword(userPasswordAfterEncoding);
@@ -50,6 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(value = "user")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void delete(User user) {
         userRepository.delete(user);
     }
@@ -80,11 +84,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(value = "user")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteByUsername(String username) {
         userRepository.deleteByUsername(username);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

@@ -47,7 +47,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    @CachePut(value = "goods", key = "#goods.id")
+    @CachePut(value = "goods", key = "#goods.id", unless = "#result == null")
     public Goods save(Goods goods) throws NotFoundException {
         if (goods.getId()!=null) {
             checkNotFound(goods);

@@ -14,7 +14,7 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler({NotFoundException.class, IllegalArgumentException.class})
     public ResponseEntity<?> notFoundException(NotFoundException ex, WebRequest request) {
         return responseEntity(ex, request, HttpStatus.NOT_FOUND);
     }
