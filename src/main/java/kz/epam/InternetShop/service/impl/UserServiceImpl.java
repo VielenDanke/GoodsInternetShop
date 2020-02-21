@@ -32,12 +32,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(value = "user")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteAll() {
         userRepository.deleteAll();
     }
 
     @Override
     @Cacheable(value = "user")
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = NotFoundException.class, readOnly = true)
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
     }
@@ -60,24 +62,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Cacheable(value = "user")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<User> findByUsernameLike(String usernameLike) {
         return userRepository.findByUsernameLike(wrapWithWildcard(usernameLike));
     }
 
     @Override
     @Cacheable(value = "user")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<User> findByAddressLike(String addressLike) {
         return userRepository.findByAddressLike(wrapWithWildcard(addressLike));
     }
 
     @Override
     @Cacheable(value = "user")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<User> findByFullNameLike(String fullNameLike) {
         return userRepository.findByFullNameLike(wrapWithWildcard(fullNameLike));
     }
 
     @Override
     @Cacheable(value = "user")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<User> findAll() {
         return userRepository.findAll();
     }

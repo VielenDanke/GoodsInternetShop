@@ -12,6 +12,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,12 +28,14 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     @Cacheable(value = "goods")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<Goods> findAll(List<GoodsFilter> filters) {
         return applyFilters(repository.findAll(), filters);
     }
 
     @Override
     @Cacheable(value = "goods")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<Goods> findAllByGoodsCategory(GoodsCategory goodsCategory, List<GoodsFilter> filters) {
         return applyFilters(repository.findAllByGoodsCategory(goodsCategory), filters);
     }
@@ -48,6 +52,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     @CachePut(value = "goods", key = "#goods.id", unless = "#result == null")
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = NotFoundException.class)
     public Goods save(Goods goods) throws NotFoundException {
         if (goods.getId()!=null) {
             checkNotFound(goods);
@@ -57,6 +62,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     @CacheEvict(value = "goods")
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = NotFoundException.class)
     public void delete(Goods goods) throws NotFoundException {
         checkNotFound(goods);
         repository.delete(goods);
@@ -64,6 +70,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     @Cacheable(value = "goods")
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public Goods get(long goodsId) {
         Goods goods =  repository.findById(goodsId).orElse(null);
         ValidationUtil.checkNotFound(goods!=null, "Item not found");
