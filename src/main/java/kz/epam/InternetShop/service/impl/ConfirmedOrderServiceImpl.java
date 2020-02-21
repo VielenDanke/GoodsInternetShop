@@ -8,6 +8,8 @@ import kz.epam.InternetShop.repository.OrderRepository;
 import kz.epam.InternetShop.service.interfaces.ConfirmedOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,11 +26,13 @@ public class ConfirmedOrderServiceImpl implements ConfirmedOrderService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<Order> getAllOrders(User user) {
         return orderRepository.findAllByUserAndStatus(user, ONE_STATUS);
     }
 
     @Override
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<OrderDetails> getAllOrderDetails(Order order) {
         return orderDetailsRepository.findByOrder(order);
     }

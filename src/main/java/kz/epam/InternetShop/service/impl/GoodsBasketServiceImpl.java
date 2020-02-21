@@ -12,6 +12,8 @@ import kz.epam.InternetShop.util.exception.NotAvailableGoodsException;
 import kz.epam.InternetShop.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,17 +34,20 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.NEVER, readOnly = true)
     public List<OrderDetails> getAllOrderDetails(User user) {
         return checkAvailability(orderDetailsRepository.findByOrder(getBasket(user)));
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void clear(User user) {
         Order basket = getBasket(user);
         orderRepository.delete(basket);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = NotAvailableGoodsException.class)
     public void setStatusToOne(User user) throws NotAvailableGoodsException {
         Order basket = getBasket(user);
         checkAvailability(basket);
@@ -74,6 +79,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
     
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public Order getBasket(User user) {
         Order result;
         List<Order> orders = orderRepository.findAllByUserAndStatus(user, ZERO_STATUS);
@@ -87,6 +93,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public OrderDetails createOrderDetailsInBasket(OrderDetails orderDetails, User user) {
         OrderDetails targetOrderDetails;
         Order basket = getBasket(user);
@@ -106,6 +113,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = NotFoundException.class)
     public void updateCountOrderDetailsInBasket(List<OrderDetails> orderDetailsList, User user) throws NotFoundException{
         orderDetailsList.forEach(od -> {
             if (od.getCount() == 0) {
@@ -122,6 +130,7 @@ public class GoodsBasketServiceImpl implements GoodsBasketService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = NotFoundException.class)
     public void removeFromBasket(OrderDetails orderDetails, User user) throws NotFoundException{
         Long basketId = getBasket(user).getId();
         checkNotFound(orderDetails, basketId);
