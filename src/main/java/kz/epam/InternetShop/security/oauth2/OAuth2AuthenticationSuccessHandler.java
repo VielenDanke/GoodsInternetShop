@@ -34,6 +34,13 @@ import java.util.UUID;
 
 import static kz.epam.InternetShop.util.ConstantUtil.*;
 
+/**
+ * This component of security handling successful OAuth2 authentication.
+ * If user exists - updating user, if not - saving user as new one.
+ *
+ * Generate token for local validation and expiration for user in SecurityContext
+ */
+
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -46,7 +53,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
@@ -57,7 +66,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    protected String determineTargetUrl(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) {
         User user;
         Optional<User> userIfExist;
         DefaultOidcUser defaultOidcUser = (DefaultOidcUser) authentication.getPrincipal();
@@ -66,7 +77,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
-        OAuth2AuthorizationRequest oAuth2AuthorizationRequest = CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+        OAuth2AuthorizationRequest oAuth2AuthorizationRequest = CookieUtil
+                .getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
                 .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)).orElse(null);
 
         if (oAuth2AuthorizationRequest == null) {
@@ -77,7 +89,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String provider = (String) authorizationAttributes.get(REGISTRATION_ID);
 
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-            throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+            throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI " +
+                    "and can't proceed with the authentication");
         }
 
         if (attributes.isEmpty()) {
@@ -87,11 +100,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, attributes);
         userIfExist = userRepository.findByUsername(oAuth2UserInfo.getEmail());
 
-        if (userIfExist.isPresent()) {
-            user = updateExistingUser(userIfExist.get(), oAuth2UserInfo);
-        } else {
-            user = registerNewUser(oAuth2UserInfo, provider);
-        }
+        user = userIfExist.map(oAuth2User -> updateExistingUser(oAuth2User, oAuth2UserInfo))
+                .orElseGet(() -> registerNewUser(oAuth2UserInfo, provider));
 
         String targetUrl = redirectUri.orElse(LOCALHOST_MAIN_PAGE);
         String token = tokenProvider.createToken(user);
