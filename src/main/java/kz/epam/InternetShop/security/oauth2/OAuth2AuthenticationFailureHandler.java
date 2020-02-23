@@ -15,6 +15,13 @@ import java.io.IOException;
 
 import static kz.epam.InternetShop.util.ConstantUtil.*;
 
+/**
+ * This component is using for handling OAuth2 authentication failures.
+ *
+ * In onAuthenticationFailure method authorization request is removing. User redirecting to targetUrl,
+ * or main page (depends on what URL was provided) with error parameter and message, described this error.
+ */
+
 @Component
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
