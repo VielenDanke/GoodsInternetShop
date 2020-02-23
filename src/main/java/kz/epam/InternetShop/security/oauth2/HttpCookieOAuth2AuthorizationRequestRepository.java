@@ -10,6 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import static kz.epam.InternetShop.util.ConstantUtil.*;
 
+/**
+ * This component is using for storing OAuth2AuthorizationRequest in cookies.
+ *
+ * When saveAuthorizationRequest method is called, OAuth2AuthorizationRequest is serializing to String
+ * for storing in cookies.
+ *
+ * After saving automatically called removeAuthorizationRequest where forcibly loadAuthorizationMethod is calling
+ * to continue authorization process.
+ *
+ * In loadAuthorizationRequest method OAuth2AuthorizationRequest is extracting from cookies,
+ * by deserializing them.
+ *
+ * For serialization/deserialization using SerializationUtils package org.springframework.util.
+ */
+
 @Component
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
