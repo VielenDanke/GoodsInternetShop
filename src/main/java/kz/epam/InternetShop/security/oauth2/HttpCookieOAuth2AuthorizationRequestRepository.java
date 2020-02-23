@@ -22,7 +22,7 @@ import static kz.epam.InternetShop.util.ConstantUtil.*;
  * In loadAuthorizationRequest method OAuth2AuthorizationRequest is extracting from cookies,
  * by deserializing them.
  *
- * For serialization/deserialization using SerializationUtils package org.springframework.util.
+ * For serialization/deserialization using SerializationUtils.class package org.springframework.util.
  */
 
 @Component
